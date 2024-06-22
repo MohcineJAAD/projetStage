@@ -26,7 +26,7 @@
             <h1>Transformez-vous</h1>
             <p>Rejoignez-nous et atteignez vos objectifs.</p>
             <div class="button-container">
-                <a href="#form-section" class="button">Commencer Maintenant</a>
+                <a href="sign_up.php" class="button">Commencer Maintenant</a>
             </div>
         </div>
     </section>
