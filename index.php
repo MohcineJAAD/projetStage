@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+$id = '';
+
+if (isset($_SESSION['message'])) {
+    $id = $_SESSION['message'];
+    unset($_SESSION['message']);
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -14,7 +24,7 @@
 </head>
 
 <body>
-    <?php require "header.php";?>
+    <?php require "header.php"; ?>
     <section id="hero">
         <div class="hero-slider">
             <div class="slide active" style="background-image: url('assets/images/FUllcontct.jpg');background-position: center;background-size: cover;"></div>
@@ -155,7 +165,18 @@
         </div>
     </footer>
 
-
+    <div class="modal" id="modal"></div>
+    <div class="popup" id="popup">
+        <span class="x-close" onclick="closePopup()">&times;</span>
+        <div class="popup-content">
+            <h2>Compte Créé Avec Succès</h2>
+            <p>Votre compte a été créé avec succès, votre identifiant est : <strong id="user-identifier"></strong></p>
+            <p>Pour activer votre compte, veuillez vous rendre en personne à notre club à l'adresse suivante :</p>
+            <p><strong>Adresse :</strong> <span id="club-address"></span></p>
+            <p>Pour plus d'informations, contactez l'administrateur au : <strong id="admin-phone"></strong></p>
+        </div>
+        <button class="close-btn" onclick="closePopup()">Fermer</button>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const slides = document.querySelectorAll('.slide');
@@ -167,6 +188,39 @@
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
             }
+        });
+
+        const userData = {
+            identifier: "<?php echo $id; ?>",
+            clubAddress: "123 Sports Club St, Cityville, State 12345",
+            adminPhone: "+1 (234) 567-8900"
+        };
+
+        // Show the popup when the page loads if identifier is not empty
+        window.onload = function() {
+            if (userData.identifier) {
+                document.getElementById('modal').style.display = 'block';
+                document.getElementById('popup').style.display = 'block';
+
+                // Set the dynamic content
+                document.getElementById('user-identifier').textContent = userData.identifier;
+                document.getElementById('club-address').textContent = userData.clubAddress;
+                document.getElementById('admin-phone').textContent = userData.adminPhone;
+            }
+        }
+
+        // Function to close the popup
+        function closePopup() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Close popup when clicking outside
+        document.getElementById('modal').addEventListener('click', closePopup);
+
+        // Prevent closing when clicking inside the popup
+        document.getElementById('popup').addEventListener('click', function(event) {
+            event.stopPropagation();
         });
     </script>
 </body>
