@@ -769,12 +769,12 @@ label:not(.form-personne label) {
     border-radius: 5px;
     cursor: pointer;
 }
-.edit-btn,
+.modify-btn,
 .delete-btn,
 .save-btn {
     color: var(--color-30);
 }
-.edit-btn {
+.modify-btn {
     background-color: #4CAF50;
 }
 .delete-btn {

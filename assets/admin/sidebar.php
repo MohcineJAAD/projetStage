@@ -11,13 +11,13 @@
             </a>
         </li>
         <li>
-            <a href="adherentes.php" class="<?php echo $current_page == 'opProfesseur.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
+            <a href="adherentes.php" class="<?php echo $current_page == 'adherentes.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
                 <i class="fa-solid fa-user fa-fw"></i>
                 <span class="fs-14 ml-10">Adhérentes</span>
             </a>
         </li>
         <li>
-            <a href="opEtudient.php" class="<?php echo $current_page == 'opEtudient.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
+            <a href="paiement.php" class="<?php echo $current_page == 'paiement.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
                 <i class="fa-solid fa-credit-card fa-fw"></i>
                 <span class="fs-14 ml-10">Paiement</span>
             </a>

@@ -97,6 +97,7 @@ session_start();
                     <table class="fs-15 w-full" id="adherent-list">
                         <thead>
                             <tr>
+                            <tr>
                                 <th>Nom complet</th>
                                 <th>Identifiant</th>
                                 <th>Mot de passe</th>
