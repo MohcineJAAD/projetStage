@@ -1,13 +1,13 @@
 :root {
-    --color-60: #0075ff;
-    --color-60-Tr: #0077ff80;
+    --color-60: #203a85;
+    --color-60-Tr: #203a8580;
     --color-30: #fff;
     --color-10: #333333;
     --color-10-transparent: #3333331a;
     --color-second: #d6d6d6;
     --color-aaa: #aaa;
     --color-333: #333;
-    --c-fff: #fff;
+    --color-f8f9fa: #f8f9fa;
     --c-f00: #f00;
 }
 /* Box */
@@ -93,6 +93,9 @@
 }
 .bg-green {
     background-color: #02ec8b;
+}
+.color-60 {
+    color: var(--color-60);
 }
 .color-000 {
     color: var(--c-000);
