@@ -401,12 +401,13 @@ ul {
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
-    background-color: #007bff;
+    background-color: var(--color-60);
     color: #fff;
     cursor: pointer;
 }
-.branch-filter button:hover {
-    background-color: #0056b3;
+.branch-filter button:hover,
+.branch-filter button:focus {
+    background-color: var(--color-60-Tr);
 }
 /* End personne Contant */
 /* Absence */

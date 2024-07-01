@@ -26,6 +26,15 @@ session_start();
             height: 50px;
             display: table-cell;
         }
+
+        table i {
+            color: #203a85;
+            font-size: 25px;
+        }
+
+        table i:hover {
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -36,55 +45,6 @@ session_start();
             <?php require 'header.php'; ?>
             <h1 class="p-relative">Gestion des adhérents</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
-                <h2 class="mt-0 mb-20">Les nouveaux inscriptions</h2>
-                <div class="responsive-table">
-                    <table class="fs-15 w-full">
-                        <thead>
-                            <tr>
-                                <th>Nom complet</th>
-                                <th>Identifiant</th>
-                                <th>Mot de passe</th>
-                                <th>Sport</th>
-                                <th>Date d'inscription</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $stmt = $conn->prepare("SELECT * FROM users WHERE status = ?");
-                            $status = 'pending';
-                            $stmt->bind_param("s", $status);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-
-                            if ($result->num_rows > 0) {
-                                while ($rows = $result->fetch_assoc()) {
-                                    $stmt2 = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
-                                    $stmt2->bind_param("s", $rows['identifier']);
-                                    $stmt2->execute();
-                                    $res = $stmt2->get_result();
-                                    $row = $res->fetch_assoc();
-                                    $id = $rows['identifier'];
-                                    echo "<tr>";
-                                    echo "<td>" . htmlspecialchars($row['prenom'] . " " . $row['nom']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows['identifier']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows['password']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row['type']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row['date_adhesion']) . "</td>";
-                                    echo "<td>
-                                            <a href='../php/rejeter.php?id=$id' class='supprimer-btn'><span class='label btn-shape bg-f00'>Rejeter</span></a>
-                                            <a href='../php/accepter.php?id=$id' class='justification-btn'><span class='label btn-shape bg-green'>Accepter</span></a>
-                                          </td>";
-                                    echo "</tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='6' class='no-results'>Aucune inscription trouvée</td></tr>";
-                            }
-                            $stmt->close();
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
                 <h2 class="mt-0 mb-20 mt-20">Les adhérents</h2>
                 <div class="responsive-table">
                     <div class="options w-full">
@@ -97,12 +57,11 @@ session_start();
                     <table class="fs-15 w-full" id="adherent-list">
                         <thead>
                             <tr>
-                            <tr>
                                 <th>Nom complet</th>
-                                <th>Identifiant</th>
-                                <th>Mot de passe</th>
                                 <th>Sport</th>
-                                <th>Date d'inscription</th>
+                                <th>Discipline</th>
+                                <th>Performances</th>
+                                <th>Comportement</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -115,6 +74,9 @@ session_start();
                             $stmt1->execute();
                             $result1 = $stmt1->get_result();
 
+                            $currentMonth = date('m');
+                            $currentYear = date('Y');
+
                             if ($result1->num_rows > 0) {
                                 while ($rows1 = $result1->fetch_assoc()) {
                                     $stmt2 = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
@@ -122,18 +84,50 @@ session_start();
                                     $stmt2->execute();
                                     $res1 = $stmt2->get_result();
                                     $row1 = $res1->fetch_assoc();
+
+                                    $stmt3 = $conn->prepare("SELECT * FROM evaluations WHERE identifier = ? AND month = ? AND year = ?");
+                                    $stmt3->bind_param("sii", $rows1['identifier'], $currentMonth, $currentYear);
+                                    $stmt3->execute();
+                                    $res2 = $stmt3->get_result();
+                                    $evaluation = $res2->fetch_assoc();
+
+                                    $discipline = $evaluation['discipline'] ?? 0;
+                                    $performance = $evaluation['performance'] ?? 0;
+                                    $behavior = $evaluation['behavior'] ?? 0;
+
+                                    echo "<form action='../php/save_evaluation.php' method='post'>";
                                     echo "<tr data-branch='" . htmlspecialchars($row1['type']) . "'>";
                                     echo "<td>" . htmlspecialchars($row1['prenom'] . " " . $row1['nom']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows1['identifier']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows1['password']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row1['type']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row1['date_adhesion']) . "</td>";
-                                    $identifiant = $rows1['identifier'];
-                                    echo "<td>
-                                    <a href='../php/delete_absence.php' class='supprimer-btn'><span class='label btn-shape bg-c-60'>Profile</span></a>
-                                    <a href='../php/delete_adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-f00'>Supprimer</span></a>
-                                    </td>";
+
+                                    echo "<td>";
+                                    for ($i = 0; $i < 5; $i++) {
+                                        $class = $i < $discipline ? 'fa-solid' : 'fa-regular';
+                                        echo "<i class='$class fa-star' data-index='$i'></i>";
+                                    }
+                                    echo "<input type='hidden' name='discipline' value='$discipline'>";
+                                    echo "</td>";
+
+                                    echo "<td>";
+                                    for ($i = 0; $i < 5; $i++) {
+                                        $class = $i < $performance ? 'fa-solid' : 'fa-regular';
+                                        echo "<i class='$class fa-star' data-index='$i'></i>";
+                                    }
+                                    echo "<input type='hidden' name='performance' value='$performance'>";
+                                    echo "</td>";
+
+                                    echo "<td>";
+                                    for ($i = 0; $i < 5; $i++) {
+                                        $class = $i < $behavior ? 'fa-solid' : 'fa-regular';
+                                        echo "<i class='$class fa-star' data-index='$i'></i>";
+                                    }
+                                    echo "<input type='hidden' name='behavior' value='$behavior'>";
+                                    echo "</td>";
+
+                                    echo "<td><input type='hidden' name='identifier' value='" . htmlspecialchars($row1['identifier']) . "'>";
+                                    echo "<button type='submit' class='btn-shape bg-c-60 color-fff'>Enregistrer</button></td>";
                                     echo "</tr>";
+                                    echo "</form>";
                                 }
                             } else {
                                 echo "<tr><td colspan='6' class='no-results'>Aucun adhérent trouvé</td></tr>";
@@ -142,7 +136,9 @@ session_start();
                             $stmt1->close();
                             $conn->close();
                             ?>
-                            <tr class='no-results' style="display:none;"><td colspan='6' class='no-results'>Aucun adhérent trouvé</td></tr>
+                            <tr class='no-results' style="display:none;">
+                                <td colspan='6' class='no-results'>Aucun adhérent trouvé</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -196,8 +192,30 @@ session_start();
         if (!hasVisibleRow) {
             noResultsRow.style.display = "";
         }
+
+        // Add event listener to toggle star icon and update hidden input values
+        const tds = document.querySelectorAll("#adherent-list tbody td");
+        tds.forEach(td => {
+            const stars = td.querySelectorAll(".fa-star");
+            const hiddenInput = td.querySelector("input[type='hidden']");
+            stars.forEach((star, index) => {
+                star.addEventListener("click", function() {
+                    stars.forEach((s, i) => {
+                        if (i <= index) {
+                            s.classList.remove("fa-regular");
+                            s.classList.add("fa-solid");
+                        } else {
+                            s.classList.remove("fa-solid");
+                            s.classList.add("fa-regular");
+                        }
+                    });
+                    hiddenInput.value = index + 1; // Update hidden input value
+                });
+            });
+        });
     });
 </script>
+
 <script>
     <?php
     if (isset($_SESSION['message']) && isset($_SESSION['status'])) {

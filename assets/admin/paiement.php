@@ -43,7 +43,7 @@ $result_taekwondo = $stmt_taekwondo->get_result();
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
             <?php require 'header.php'; ?>
-            <h1 class="p-relative">L'emploi du temps</h1>
+            <h1 class="p-relative">Paiement</h1>
             <div class="accordion-container">
                 <div class="accordion-item m-20">
                     <div class="accordion-header">
@@ -69,7 +69,7 @@ $result_taekwondo = $stmt_taekwondo->get_result();
                                             <td><?= htmlspecialchars($row['identifier']) ?></td>
                                             <td><?= htmlspecialchars($row['type']) ?></td>
                                             <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
-                                            <td><a href='paiement_child.php?id=<?php echo $row['identifier'] ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
+                                            <td><a href='paiement_child.php?id=<?php echo $row['identifier'] ?>&date=<?php echo date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
                                         </tr>
                                     <?php endwhile; ?>
                                 </tbody>
@@ -101,7 +101,7 @@ $result_taekwondo = $stmt_taekwondo->get_result();
                                             <td><?= htmlspecialchars($row['identifier']) ?></td>
                                             <td><?= htmlspecialchars($row['type']) ?></td>
                                             <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
-                                            <td><a href='paiement_child.php?id=<?php echo $row['identifier'] ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
+                                            <td><a href='paiement_child.php?id=<?php echo $row['identifier'] ?>&date=<?php echo date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
                                         </tr>
                                     <?php endwhile; ?>
                                 </tbody>
