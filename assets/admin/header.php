@@ -26,10 +26,10 @@ $user_name = htmlspecialchars("$prenom $nom", ENT_QUOTES, 'UTF-8');
 
 <div class="head p-15 between-flex">
     <h2 class="welcomUser">Bonjour, <?php echo $user_name; ?></h2>
-    <img src="<?php echo htmlspecialchars($image_profil); ?>" alt="avatar" id="avatar">
+    <img src="<?php echo htmlspecialchars("../uploads/".$image_profil); ?>" alt="avatar" id="avatar">
     <div class="drop-menu p-10" id="dropMenu">
         <div class="userHeader mb-5">
-            <img src="<?php echo htmlspecialchars($image_profil); ?>" alt="avatar">
+            <img src="<?php echo htmlspecialchars("../uploads/".$image_profil); ?>" alt="avatar">
             <span class="fs-14 m-0"><?php echo htmlspecialchars($prenom, ENT_QUOTES, 'UTF-8'); ?></span>
         </div>
         <ul>

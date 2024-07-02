@@ -35,7 +35,6 @@
                         <img src="assets/images/hide.png" alt="password show" id="eye">
                     </div>
                     <input type="submit" value="Se connecter" class="btn">
-                    <p class="login-prob">Si vous rencontrez un problème lors de la connexion, veuillez <span>cliquer içi</span></p>
                 </form>
             </div>
         </div>

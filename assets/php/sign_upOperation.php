@@ -31,7 +31,7 @@ function generateRandomPassword($length = 8) {
     return $password;
 }
 
-function handleFileUpload($file, &$imagePath) {
+function handleFileUpload($file, &$fileName) {
     $allowedTypes = ['image/jpeg', 'image/png'];
     $uploadDir = '../uploads/';
 
@@ -48,10 +48,10 @@ function handleFileUpload($file, &$imagePath) {
 
             if (!file_exists($targetFile)) {
                 if (move_uploaded_file($file['tmp_name'], $targetFile)) {
-                    if ($imagePath !== 'assets/images/default_image.png' && file_exists($imagePath)) {
-                        unlink($imagePath);
+                    if ($fileName !== 'default_image.png' && file_exists($uploadDir . $fileName)) {
+                        unlink($uploadDir . $fileName);
                     }
-                    $imagePath = $targetFile;
+                    $fileName = $uniqueName;
                     return true;
                 }
             } else {
@@ -93,10 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
         exit();
     }
 
-    $imagePath = 'assets/images/default_image.png';
+    $fileName = 'default_image.png';
 
     if (isset($_FILES['imageUpload']) && $_FILES['imageUpload']['error'] !== UPLOAD_ERR_NO_FILE) {
-        handleFileUpload($_FILES['imageUpload'], $imagePath);
+        handleFileUpload($_FILES['imageUpload'], $fileName);
     }
 
     $sql = "INSERT INTO users (identifier, password, role, created_at) VALUES (?, ?, ?, ?)";
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
         $sql = "INSERT INTO adherents (identifier, nom, prenom, date_naissance, poids, type, date_adhesion, image_path, guardian_name, guardian_phone, address, blood_type, health_status)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssdssssssss", $identifier, $nom, $prenom, $birthDate, $weight, $sport, $membershipDate, $imagePath, $guardianName, $guardianPhone, $address, $bloodType, $healthStatus);
+        $stmt->bind_param("ssssdssssssss", $identifier, $nom, $prenom, $birthDate, $weight, $sport, $membershipDate, $fileName, $guardianName, $guardianPhone, $address, $bloodType, $healthStatus);
 
         if ($stmt->execute()) {
             $_SESSION['message'] = $identifier;

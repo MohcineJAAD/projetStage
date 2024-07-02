@@ -9,7 +9,19 @@ if (isset($_GET['id'])) {
     $conn->begin_transaction();
 
     try {
-        // Delete from `etudiants` table
+        // Delete from `payments` table
+        $query0 = "DELETE FROM payments WHERE identifier = ?";
+        $stmt0 = $conn->prepare($query0);
+        if (!$stmt0) {
+            throw new Exception("Préparation de la première requête échouée: " . $conn->error);
+        }
+        $stmt0->bind_param("s", $id);
+        if (!$stmt0->execute()) {
+            throw new Exception("Exécution de la première requête échouée: " . $stmt0->error);
+        }
+        $stmt0->close();
+
+        // Delete from `adherents` table
         $query1 = "DELETE FROM adherents WHERE identifier = ?";
         $stmt1 = $conn->prepare($query1);
         if (!$stmt1) {
@@ -21,7 +33,7 @@ if (isset($_GET['id'])) {
         }
         $stmt1->close();
 
-        // Delete from `utilisateurs` table
+        // Delete from `users` table
         $query2 = "DELETE FROM users WHERE identifier = ?";
         $stmt2 = $conn->prepare($query2);
         if (!$stmt2) {
@@ -42,7 +54,7 @@ if (isset($_GET['id'])) {
         // Rollback transaction if any query fails
         $conn->rollback();
         
-        $_SESSION['message'] = "Erreur lors de la suppression d'adhérent:" . $e->getMessage();
+        $_SESSION['message'] = "Erreur lors de la suppression d'adhérent: " . $e->getMessage();
         $_SESSION['status'] = 'error';
     }
 } else {
