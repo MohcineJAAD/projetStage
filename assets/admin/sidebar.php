@@ -23,7 +23,7 @@
             </a>
         </li>
         <li>
-            <a href="evaluation.php" class="<?php echo $current_page == 'pub.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
+            <a href="evaluation.php" class="<?php echo $current_page == 'evaluation.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
                 <i class="fa-solid fa-star fa-fw"></i>
                 <span class="fs-14 ml-10">Evaluation</span>
             </a>

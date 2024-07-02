@@ -90,6 +90,11 @@ ul {
     font-weight: 600;
     color: var(--color-10);
 }
+@media (max-width: 767px) {
+    h2 {
+        font-size: 16px;
+    }
+}
 .page .head img {
     cursor: pointer;
     width: 40px;
@@ -896,3 +901,37 @@ label:not(.form-personne label) {
     }
 }
 /* End horaire */
+
+input[type="checkbox"] {
+    width: 38.094px;
+    height: 38.094px;
+}  
+input[type="checkbox"]:hover {
+    cursor: pointer;
+}
+.no-results {
+    text-align: center;
+    font-weight: bold;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    width: 100%;
+}
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: var(--color-60);
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+    width: 100%;
+}
+.btn:hover {
+    background-color: var(--color-60-Tr);
+}

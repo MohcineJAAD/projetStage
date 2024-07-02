@@ -22,9 +22,10 @@ session_start();
         .no-results {
             text-align: center;
             font-weight: bold;
-            vertical-align: middle;
-            height: 50px;
-            display: table-cell;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            width: 100%;
         }
     </style>
 </head>
@@ -37,6 +38,13 @@ session_start();
             <h1 class="p-relative">Gestion des adhérents</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
                 <h2 class="mt-0 mb-20">Les nouveaux inscriptions</h2>
+                <?php
+                $stmt = $conn->prepare("SELECT * FROM users WHERE status = ?");
+                $status = 'pending';
+                $stmt->bind_param("s", $status);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                ?>
                 <div class="responsive-table">
                     <table class="fs-15 w-full">
                         <thead>
@@ -51,12 +59,6 @@ session_start();
                         </thead>
                         <tbody>
                             <?php
-                            $stmt = $conn->prepare("SELECT * FROM users WHERE status = ?");
-                            $status = 'pending';
-                            $stmt->bind_param("s", $status);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-
                             if ($result->num_rows > 0) {
                                 while ($rows = $result->fetch_assoc()) {
                                     $stmt2 = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
@@ -78,25 +80,34 @@ session_start();
                                     echo "</tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='6' class='no-results'>Aucune inscription trouvée</td></tr>";
+                                echo "</tbody></table>";
+                                echo "<div class='no-results'>Aucune inscription trouvée</div>";
                             }
                             $stmt->close();
                             ?>
                         </tbody>
                     </table>
                 </div>
+
                 <h2 class="mt-0 mb-20 mt-20">Les adhérents</h2>
-                <div class="responsive-table">
-                    <div class="options w-full">
-                        <div class="branch-filter mt-10 mb-10">
-                            <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">Tous</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Taekwondo">Taekwondo</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Fullcontact">Fullcontact</button>
-                        </div>
+                <div class="options w-full">
+                    <div class="branch-filter mt-10 mb-10">
+                        <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">Tous</button>
+                        <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Taekwondo">Taekwondo</button>
+                        <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Fullcontact">Fullcontact</button>
                     </div>
+                </div>
+                <div class="responsive-table">
+                    <?php
+                    $stmt1 = $conn->prepare("SELECT * FROM users WHERE status = ? AND role = ?");
+                    $status_active = 'active';
+                    $role = 'adherent';
+                    $stmt1->bind_param("ss", $status_active, $role);
+                    $stmt1->execute();
+                    $result1 = $stmt1->get_result();
+                    ?>
                     <table class="fs-15 w-full" id="adherent-list">
                         <thead>
-                            <tr>
                             <tr>
                                 <th>Nom complet</th>
                                 <th>Identifiant</th>
@@ -108,13 +119,6 @@ session_start();
                         </thead>
                         <tbody>
                             <?php
-                            $stmt1 = $conn->prepare("SELECT * FROM users WHERE status = ? AND role = ?");
-                            $status_active = 'active';
-                            $role = 'adherent';
-                            $stmt1->bind_param("ss", $status_active, $role);
-                            $stmt1->execute();
-                            $result1 = $stmt1->get_result();
-
                             if ($result1->num_rows > 0) {
                                 while ($rows1 = $result1->fetch_assoc()) {
                                     $stmt2 = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
@@ -130,19 +134,18 @@ session_start();
                                     echo "<td>" . htmlspecialchars($row1['date_adhesion']) . "</td>";
                                     $identifiant = $rows1['identifier'];
                                     echo "<td>
-                                    <a href='../php/delete_absence.php' class='supprimer-btn'><span class='label btn-shape bg-c-60'>Profile</span></a>
-                                    <a href='../php/delete_adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-f00'>Supprimer</span></a>
-                                    </td>";
+                                            <a href='profile-adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-c-60'>Profile</span></a>
+                                            <a href='../php/delete_adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-f00'>Supprimer</span></a>
+                                          </td>";
                                     echo "</tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='6' class='no-results'>Aucun adhérent trouvé</td></tr>";
+                                echo "</tbody></table>";
+                                echo "<div class='no-results'>Aucun adhérent trouvé</div>";
                             }
-
                             $stmt1->close();
                             $conn->close();
                             ?>
-                            <tr class='no-results' style="display:none;"><td colspan='6' class='no-results'>Aucun adhérent trouvé</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -173,17 +176,17 @@ session_start();
                 }
             });
 
-            const noResultsRow = document.querySelector("#adherent-list tbody .no-results");
+            const noResultsRow = document.querySelector("#adherent-list .no-results");
             if (hasVisibleRow) {
                 noResultsRow.style.display = "none";
             } else {
-                noResultsRow.style.display = "";
+                noResultsRow.style.display = "table-row";
             }
         });
     });
 
     document.addEventListener("DOMContentLoaded", function() {
-        const noResultsRow = document.querySelector("#adherent-list tbody .no-results");
+        const noResultsRow = document.querySelector("#adherent-list .no-results");
         const rows = document.querySelectorAll("#adherent-list tbody tr");
         let hasVisibleRow = false;
 
@@ -194,10 +197,11 @@ session_start();
         });
 
         if (!hasVisibleRow) {
-            noResultsRow.style.display = "";
+            noResultsRow.style.display = "table-row";
         }
     });
 </script>
+
 <script>
     <?php
     if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
