@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $adherent = $conn->real_escape_string($_POST['adherent']);
     $months = $_POST['months'] ?? [];
     $assurance = isset($_POST['assurance']);
+    $adhesion = isset($_POST['adhesion']);
     $year = intval($_POST['year']);
 
     // Debugging output
@@ -15,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "Months: ";
     print_r($months);
     echo "Assurance: " . ($assurance ? 'Yes' : 'No') . "\n";
+    echo "Adhésion: " . ($adhesion ? 'Yes' : 'No') . "\n";
     echo "</pre>";
 
     $result = $conn->query("SELECT identifier FROM adherents WHERE identifier='$adherent'");
@@ -51,7 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $payment_date = $year . '-01-01'; // Assuming payment date as start of the year
         $sql = "INSERT INTO payments (identifier, payment_date, amount, type) VALUES ('$adherent', '$payment_date', $amount, 'assurance')";
         if (!$conn->query($sql)) {
-            $errors[] = 'Erreur lors de l\'insertion de la cotisation annuelle: ' . $conn->error;
+            $errors[] = 'Erreur lors de l\'insertion de l\'assurance: ' . $conn->error;
+        }
+    }
+
+    if ($adhesion) {
+        $amount = 150; // Adjust the amount based on class type if necessary
+        $payment_date = $year . '-01-01'; // Assuming payment date as start of the year
+        $sql = "INSERT INTO payments (identifier, payment_date, amount, type) VALUES ('$adherent', '$payment_date', $amount, 'adhesion')";
+        if (!$conn->query($sql)) {
+            $errors[] = 'Erreur lors de l\'insertion de l\'adhésion annuelle: ' . $conn->error;
         }
     }
 

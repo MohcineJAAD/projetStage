@@ -39,7 +39,7 @@ session_start();
             <div class="absences p-20 bg-fff rad-10 m-20">
                 <h2 class="mt-0 mb-20">Les nouveaux inscriptions</h2>
                 <?php
-                $stmt = $conn->prepare("SELECT * FROM users WHERE status = ?");
+                $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
                 $status = 'pending';
                 $stmt->bind_param("s", $status);
                 $stmt->execute();
@@ -51,7 +51,7 @@ session_start();
                             <tr>
                                 <th>Nom complet</th>
                                 <th>Identifiant</th>
-                                <th>Mot de passe</th>
+                                <th>Date de naissance</th>
                                 <th>Sport</th>
                                 <th>Date d'inscription</th>
                                 <th>Actions</th>
@@ -60,17 +60,12 @@ session_start();
                         <tbody>
                             <?php
                             if ($result->num_rows > 0) {
-                                while ($rows = $result->fetch_assoc()) {
-                                    $stmt2 = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
-                                    $stmt2->bind_param("s", $rows['identifier']);
-                                    $stmt2->execute();
-                                    $res = $stmt2->get_result();
-                                    $row = $res->fetch_assoc();
-                                    $id = $rows['identifier'];
+                                while ($row = $result->fetch_assoc()) {
+                                    $id = $row['identifier'];
                                     echo "<tr>";
                                     echo "<td>" . htmlspecialchars($row['prenom'] . " " . $row['nom']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows['identifier']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows['password']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['identifier']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['date_naissance']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row['type']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row['date_adhesion']) . "</td>";
                                     echo "<td>
@@ -99,10 +94,9 @@ session_start();
                 </div>
                 <div class="responsive-table">
                     <?php
-                    $stmt1 = $conn->prepare("SELECT * FROM users WHERE status = ? AND role = ?");
+                    $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
                     $status_active = 'active';
-                    $role = 'adherent';
-                    $stmt1->bind_param("ss", $status_active, $role);
+                    $stmt1->bind_param("s", $status_active);
                     $stmt1->execute();
                     $result1 = $stmt1->get_result();
                     ?>
@@ -111,7 +105,6 @@ session_start();
                             <tr>
                                 <th>Nom complet</th>
                                 <th>Identifiant</th>
-                                <th>Mot de passe</th>
                                 <th>Sport</th>
                                 <th>Date d'inscription</th>
                                 <th>Actions</th>
@@ -120,19 +113,13 @@ session_start();
                         <tbody>
                             <?php
                             if ($result1->num_rows > 0) {
-                                while ($rows1 = $result1->fetch_assoc()) {
-                                    $stmt2 = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
-                                    $stmt2->bind_param("s", $rows1['identifier']);
-                                    $stmt2->execute();
-                                    $res1 = $stmt2->get_result();
-                                    $row1 = $res1->fetch_assoc();
+                                while ($row1 = $result1->fetch_assoc()) {
                                     echo "<tr data-branch='" . htmlspecialchars($row1['type']) . "'>";
                                     echo "<td>" . htmlspecialchars($row1['prenom'] . " " . $row1['nom']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows1['identifier']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows1['password']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row1['identifier']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row1['type']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row1['date_adhesion']) . "</td>";
-                                    $identifiant = $rows1['identifier'];
+                                    $identifiant = $row1['identifier'];
                                     echo "<td>
                                             <a href='profile-adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-c-60'>Profile</span></a>
                                             <a href='../php/delete_adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-f00'>Supprimer</span></a>
@@ -207,7 +194,6 @@ session_start();
     if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
         $status_message = $_SESSION['message'];
         $status_type = $_SESSION['status'];
-        // Ensure proper quoting and escaping in the JavaScript string
         echo "showToast('" . addslashes($status_message) . "', '" . addslashes($status_type) . "');";
         unset($_SESSION['message']);
         unset($_SESSION['status']);

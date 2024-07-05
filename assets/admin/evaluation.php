@@ -67,10 +67,9 @@ session_start();
                         </thead>
                         <tbody>
                             <?php
-                            $stmt1 = $conn->prepare("SELECT * FROM users WHERE status = ? AND role = ?");
+                            $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
                             $status_active = 'active';
-                            $role = 'adherent';
-                            $stmt1->bind_param("ss", $status_active, $role);
+                            $stmt1->bind_param("s", $status_active);
                             $stmt1->execute();
                             $result1 = $stmt1->get_result();
 

@@ -43,7 +43,7 @@ if (isset($_SESSION['message'])) {
     <section id="about">
         <div class="container">
             <h2>À propos de notre salle de sport</h2>
-            <p>Chez [Nom de la salle de sport], nous sommes convaincus de l'importance de proposer des programmes d'entraînement de haute qualité pour aider nos membres à atteindre leurs objectifs de remise en forme. Grâce à des installations à la pointe de la technologie et une équipe de coachs expérimentés, nous proposons une large gamme de cours, incluant le Taekwondo, le full contact et l'aérobic.</p>
+            <p>Chez A.C.S.E, nous sommes convaincus de l'importance de proposer des programmes d'entraînement de haute qualité pour aider nos membres à atteindre leurs objectifs de remise en forme. Grâce à des installations à la pointe de la technologie et une équipe de coachs expérimentés, nous proposons une large gamme de cours, incluant le Taekwondo, le full contact et l'aérobic.</p>
         </div>
     </section>
     <section id="plans">
@@ -130,7 +130,7 @@ if (isset($_SESSION['message'])) {
             <div class="footer-sections">
                 <div class="footer-section">
                     <h3>À propos</h3>
-                    <p>Chez [Nom de la salle de sport], nous nous engageons à offrir des programmes d'entraînement de haute qualité pour aider nos membres à atteindre leurs objectifs de remise en forme.</p>
+                    <p>Chez A.C.S.E, nous nous engageons à offrir des programmes d'entraînement de haute qualité pour aider nos membres à atteindre leurs objectifs de remise en forme.</p>
                 </div>
                 <div class="footer-section">
                     <h3>Liens rapides</h3>
@@ -147,7 +147,7 @@ if (isset($_SESSION['message'])) {
                     <ul>
                         <li>Email: info@salledesport.com</li>
                         <li>Téléphone: +212 123 456 789</li>
-                        <li>Adresse: 123 Rue de la Gym, Dakhla, Maroc</li>
+                        <li>Adresse: 123 Rue hay el hassani, Dakhla, Maroc</li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -161,7 +161,7 @@ if (isset($_SESSION['message'])) {
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 [Nom de la salle de sport]. Tous droits réservés.</p>
+            <p>&copy; 2024 A.C.S.E Tous droits réservés.</p>
         </div>
     </footer>
 

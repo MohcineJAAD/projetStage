@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Redirect if 'id' parameter is not set in the URL
 if (!isset($_GET['id'])) {
-    header("Location: ../admin/adhrentes.php");
+    header("Location: ../admin/adherentes.php");
     exit();
 }
 
@@ -20,27 +20,18 @@ $id = $_GET['id'];
 $stmt1 = $conn->prepare("DELETE FROM adherents WHERE identifier = ?");
 $stmt1->bind_param("s", $id);
 
+// Execute the DELETE statement
 if ($stmt1->execute()) {
-    $stmt1->close(); // Close the first statement
-
-    // Prepare and execute the DELETE statement for users
-    $stmt2 = $conn->prepare("DELETE FROM users WHERE identifier = ?");
-    $stmt2->bind_param("s", $id);
-
-    if ($stmt2->execute()) {
-        $_SESSION['message'] = "L'adhérent a été rejeté avec succès.";
-        $_SESSION['status'] = "success";
-    } else {
-        $_SESSION['message'] = "Erreur lors de la suppression de l'utilisateur: " . $stmt2->error;
-        $_SESSION['status'] = "error";
-    }
-    $stmt2->close(); // Close the second statement
+    $_SESSION['message'] = "L'adhérent a été rejeté avec succès.";
+    $_SESSION['status'] = "success";
 } else {
     $_SESSION['message'] = "Erreur lors de la suppression de l'adhérent: " . $stmt1->error;
     $_SESSION['status'] = "error";
 }
 
-$conn->close(); // Close the database connection
+// Close the statement and connection
+$stmt1->close();
+$conn->close();
 
 // Redirect back to the adherents page
 header("Location: ../admin/adherentes.php");
