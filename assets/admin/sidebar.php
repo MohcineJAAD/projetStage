@@ -2,7 +2,7 @@
     $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <div class="sidebar bg-fff p-20 p-relative">
-    <h3 class="p-relative txt-c mt-0">B.T.S</h3>
+    <h3 class="p-relative txt-c mt-0">A.C.S.E</h3>
     <ul>
         <li>
             <a href="index.php" class="<?php echo $current_page == 'index.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
@@ -41,7 +41,7 @@
             </a>
         </li>
         <li>
-            <a href="horaire.php" class="<?php echo $current_page == 'horaire.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
+            <a href="exame.php" class="<?php echo $current_page == 'exame.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
                 <i class="fa-solid fa-person-arrow-up-from-line fa-fw"></i>
                 <span class="fs-14 ml-10">Exame</span>
             </a>

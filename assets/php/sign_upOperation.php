@@ -70,11 +70,20 @@ function handleFileUpload($file, &$fileName) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
+    $birthDate = trim($_POST['birthDate']);
+    $currentDate = date('Y-m-d');
+
+    if ($birthDate >= $currentDate) {
+        $_SESSION['message'] = "La date de naissance ne peut pas être dans le futur.";
+        $_SESSION['status'] = "error";
+        header("Location: ../../sign_up.php");
+        exit();
+    }
+
     $identifier = generateUniqueIdentifier($conn);
     $password = generateRandomPassword();
     $prenom = trim($_POST['prenom']);
     $nom = trim($_POST['nom']);
-    $birthDate = trim($_POST['birthDate']);
     $address = trim($_POST['address']);
     $guardianName = trim($_POST['guardianName']);
     $guardianPhone = trim($_POST['guardianPhone']);

@@ -2,21 +2,16 @@
 require "../php/db_connection.php";
 session_start();
 
-$stmt_fullcontact = $conn->prepare("SELECT * FROM adherents 
-                                    INNER JOIN users ON adherents.identifier = users.identifier 
-                                    WHERE status = ? AND role = ? AND type = ?");
+$stmt_fullcontact = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
 $status = 'active';
-$role = 'adherent';
 $type_fullcontact = 'Fullcontact';
-$stmt_fullcontact->bind_param("sss", $status, $role, $type_fullcontact);
+$stmt_fullcontact->bind_param("ss", $status, $type_fullcontact);
 $stmt_fullcontact->execute();
 $result_fullcontact = $stmt_fullcontact->get_result();
 
-$stmt_taekwondo = $conn->prepare("SELECT * FROM adherents 
-                                  INNER JOIN users ON adherents.identifier = users.identifier 
-                                  WHERE status = ? AND role = ? AND type = ?");
+$stmt_taekwondo = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
 $type_taekwondo = 'Taekwondo';
-$stmt_taekwondo->bind_param("sss", $status, $role, $type_taekwondo);
+$stmt_taekwondo->bind_param("ss", $status, $type_taekwondo);
 $stmt_taekwondo->execute();
 $result_taekwondo = $stmt_taekwondo->get_result();
 ?>

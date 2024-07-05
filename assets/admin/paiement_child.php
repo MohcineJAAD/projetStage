@@ -88,6 +88,7 @@
 
                 $monthsPaid = [];
                 $annualPaid = false;
+                $adhesionPaid = false;
 
                 if (!empty($identifier)) {
                     require '../php/db_connection.php';
@@ -99,6 +100,8 @@
                         while ($row = $result->fetch_assoc()) {
                             if ($row['type'] == 'assurance') {
                                 $annualPaid = true;
+                            } elseif ($row['type'] == 'adhesion') {
+                                $adhesionPaid = true;
                             } else {
                                 $paymentMonth = date('n', strtotime($row['payment_date']));
                                 $monthsPaid[] = (int)$paymentMonth;
@@ -110,7 +113,7 @@
                 }
                 ?>
                 <select id="seasonSelect" name="season" style="width: 100%; border-color: #333;" class="mb-20 p-10">
-                    <option value="">sélectionner saison</option>
+                    <option value="">Sélectionner saison</option>
                     <?php foreach ($years as $yearOption) : ?>
                         <option value="<?php echo $yearOption; ?>" <?php echo ($year == $yearOption) ? 'selected' : ''; ?>><?php echo $yearOption; ?></option>
                     <?php endforeach; ?>
@@ -143,7 +146,11 @@
                             <div class="flex-row">
                                 <div class="flex-cell<?php echo $annualPaid ? ' paid' : ''; ?>" style="flex: 1;">
                                     <input type="checkbox" name="assurance" value="assurance" <?php echo $annualPaid ? 'checked' : ''; ?> disabled>
-                                    <h4>Assurance et adhésion annuelles</h4>
+                                    <h4>Assurance</h4>
+                                </div>
+                                <div class="flex-cell<?php echo $adhesionPaid ? ' paid' : ''; ?>" style="flex: 1;">
+                                    <input type="checkbox" name="adhesion" value="adhesion" <?php echo $adhesionPaid ? 'checked' : ''; ?> disabled>
+                                    <h4>Adhésion Annuelle</h4>
                                 </div>
                             </div>
                         </div>

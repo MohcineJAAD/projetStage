@@ -48,6 +48,9 @@ unset($_SESSION['search_results']);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <title>Dashboard</title>
+    <style>
+        /* Add custom CSS styles as needed */
+    </style>
 </head>
 
 <body>
@@ -79,10 +82,9 @@ unset($_SESSION['search_results']);
                         </thead>
                         <tbody>
                             <?php
-                            $stmt1 = $conn->prepare("SELECT * FROM users WHERE status = ? AND role = ?");
+                            $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
                             $status_active = 'active';
-                            $role = 'adherent';
-                            $stmt1->bind_param("ss", $status_active, $role);
+                            $stmt1->bind_param("s", $status_active);
                             $stmt1->execute();
                             $result1 = $stmt1->get_result();
 
@@ -115,6 +117,8 @@ unset($_SESSION['search_results']);
 
                     <button type="submit" class="btn mt-20">Enregistrer</button>
                 </form>
+            </div>
+            <div class="absences p-20 bg-fff rad-10 m-20">
                 <h2 class="mt-0 mb-20 mt-20">Recherche avancée</h2>
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                     <div class="form-group">
