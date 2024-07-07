@@ -60,6 +60,30 @@ unset($_SESSION['search_results']);
             <?php require 'header.php'; ?>
             <h1 class="p-relative">Gestion des présences</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
+                <h2 class="mt-0 mb-20 mt-20">Recherche avancée</h2>
+                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <div class="form-group">
+                        <label for="identifier">Rechercher par identifiant:</label>
+                        <input type="text" id="identifier" name="identifier" class="form-control" required>
+                        <button type="submit" class="btn btn-primary mt-20">Rechercher</button>
+                    </div>
+                </form>
+                <?php
+                if ($searchResults) {
+                    if (isset($searchResults['error'])) {
+                        echo "<p style='text-align: center;'>{$searchResults['error']}</p>";
+                    } else {
+                        echo "<h3>Absences de l'adhérent '{$searchResults['name']}':</h3>";
+                        echo "<ul>";
+                        foreach ($searchResults['dates'] as $date) {
+                            echo "<li>" . htmlspecialchars($date) . "</li>";
+                        }
+                        echo "</ul>";
+                    }
+                }
+                ?>
+            </div>
+            <div class="absences p-20 bg-fff rad-10 m-20">
                 <h2 class="mt-0 mb-20 mt-20">Fiche d'absence</h2>
                 <div class="responsive-table">
                     <div class="options w-full">
@@ -117,30 +141,6 @@ unset($_SESSION['search_results']);
 
                     <button type="submit" class="btn mt-20">Enregistrer</button>
                 </form>
-            </div>
-            <div class="absences p-20 bg-fff rad-10 m-20">
-                <h2 class="mt-0 mb-20 mt-20">Recherche avancée</h2>
-                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                    <div class="form-group">
-                        <label for="identifier">Rechercher par identifiant:</label>
-                        <input type="text" id="identifier" name="identifier" class="form-control" required>
-                        <button type="submit" class="btn btn-primary mt-20">Rechercher</button>
-                    </div>
-                </form>
-                <?php
-                if ($searchResults) {
-                    if (isset($searchResults['error'])) {
-                        echo "<p style='text-align: center;'>{$searchResults['error']}</p>";
-                    } else {
-                        echo "<h3>Absences de l'adhérent '{$searchResults['name']}':</h3>";
-                        echo "<ul>";
-                        foreach ($searchResults['dates'] as $date) {
-                            echo "<li>" . htmlspecialchars($date) . "</li>";
-                        }
-                        echo "</ul>";
-                    }
-                }
-                ?>
             </div>
         </div>
     </div>
