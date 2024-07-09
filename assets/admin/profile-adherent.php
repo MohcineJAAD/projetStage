@@ -22,7 +22,6 @@
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
             <?php require 'header.php'; ?>
-
             <h1 class="p-relative">Profil</h1>
             <div class="profile-container m-20 bg-fff rad-10">
                 <div class="profile-header">
@@ -43,7 +42,7 @@
                             $type = $row['type'] ? $row['type'] : "N/A";
                             $date_adhesion = $row['date_adhesion'];
                             $BC_path = $row['BC_path'];
-                            $image = "../uploads/" . $row['image_path'];
+                            $image = $row['image_path'] ? "../uploads/" . $row['image_path'] : "../images/defult_image.png";
                             $guardian_name = $row['guardian_name'];
                             $guardian_phone = $row['guardian_phone'];
                             $second_guardian_phone = $row['second_guardian_phone'];
@@ -54,6 +53,7 @@
                             $next_belt = $row['next_belt'];
                             $identifiant = $row['identifier'];
                             $licence = $row['licence'];
+                            $note = $row['note'];
                         } else {
                             echo "<h3 class='profile-name m-0'>Information non disponible</h3>";
                         }
@@ -71,6 +71,10 @@
                                 <label for="imageUpload" class="custom-file-upload">Choisir une image</label>
                                 <input type="file" id="imageUpload" class="file-input" accept="image/*" name="imageUpload" disabled />
                                 <a href="<?php echo $image; ?>" download class="custom-file-upload file-input" style="width: 173.84px;">Télécharger</a>
+                            </div>
+                            <div class="input-field">
+                                <label for="note">Note</label>
+                                <textarea id="note" name="note" placeholder="Entrez des notes" style="width: 100%;" disabled><?php echo htmlspecialchars($note); ?></textarea>
                             </div>
                             <div class="row">
                                 <div class="input-field">
@@ -184,16 +188,6 @@
                                     <input type="text" id="licence" name="licence" value="<?php echo htmlspecialchars($licence); ?>" disabled>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="input-field">
-                                    <label for="note">Note</label>
-                                    <textarea id="note" name="note" placeholder="Entrez des notes" style="width: 100%;" disabled></textarea>
-                                </div>
-                                <div class="input-field">
-                                    <label for="trophies">Trophies</label>
-                                    <textarea id="trophies" name="trophies" placeholder="Entrez des trophées" style="width: 100%;" disabled></textarea>
-                                </div>
-                            </div>
                         </div>
                         <div class="file-upload">
                             <label for="fileUpload" class="file-upload-label">
@@ -216,6 +210,68 @@
                     </form>
                 </div>
             </div>
+            <div class="personne-page d-grid m-20 gap-20" id="teacher-list">
+                <div class="personne bg-fff rad-6 p-20 p-relative">
+                    <div class="add-card rad-6 p-20 p-relative txt-c" id="add-button">
+                        <div class="add-content">
+                            <div class="circle-dashed">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                            <p class="mt-10 color-333">Ajouter titre</p>
+                        </div>
+                    </div>
+                </div>
+                <?php
+                $query = "SELECT id, description, created_at FROM trophies WHERE adherent_id = '$id'";
+                $result = $conn->query($query);
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $trophy_id = $row['id'];
+                        $description = $row['description'];
+                        $created_at = $row['created_at'];
+
+                        echo "<div class='troph_container bg-fff rad-6 p-20 p-relative'>
+                        <form action='../php/delete_trophy.php' method='POST'>
+                <div class='txt-c'>
+                    <i class='fa-solid fa-trophy'></i>
+                    <div>{$created_at}</div>
+                </div>
+                    <div class='mb-10'>
+                        <h4 class='m-0'>{$description}</h4>
+                    </div>
+                    <input type='hidden' name='adherent_id' value='$id'>
+                    <input type='hidden' name='trophy_id' value='$trophy_id'>
+                    <button class='delete-btn btn-shape' data-id='{$trophy_id}'>Supprimer</button>
+                    </div></form>";
+                    }
+                }
+                $conn->close();
+                ?>
+            </div>
+
+            <!-- Modal HTML -->
+            <div id="addTitleModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Ajouter un titre</h2>
+                    <form id="addTitleForm" action="../php/add_title.php" method="POST">
+                        <div class="row">
+                            <div class="input-field">
+                                <label for="description">Description:</label>
+                                <textarea id="description" name="description" placeholder="Entrez Description" style="width: 100%;" required></textarea>
+                            </div>
+                            <div class="input-field">
+                                <label for="date">Date de victoire:</label>
+                                <input type="date" id="date" name="date" required>
+                            </div>
+                            <input type="hidden" name="adherent_id" value="<?php echo $id; ?>">
+                        </div>
+                        <button type="submit" class="save-btn btn-shape mb-10"><i class="fas fa-save"></i> Sauvegarder</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
     <script>
@@ -242,12 +298,32 @@
         });
 
         document.querySelector('.modify-btn').addEventListener('click', function() {
-            document.querySelectorAll('input, select').forEach(function(input) {
+            document.querySelectorAll('input, select, textarea').forEach(function(input) {
                 if (input.id !== 'identifier')
                     input.disabled = false;
             });
             document.querySelector('.modify-btn').classList.add('hidden');
             document.querySelector('.save-btn').classList.remove('hidden');
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = document.getElementById("addTitleModal");
+            var btn = document.getElementById("add-button");
+            var span = document.getElementsByClassName("close")[0];
+
+            btn.onclick = function() {
+                modal.style.display = "block";
+            }
+
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
         });
     </script>
     <script>

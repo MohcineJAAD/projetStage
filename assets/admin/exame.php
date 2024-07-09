@@ -26,6 +26,10 @@ session_start();
             border: 1px solid #ddd;
             width: 100%;
         }
+
+        .exam-session-select {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
@@ -37,54 +41,73 @@ session_start();
             <h1 class="p-relative">Gestion des adhérents</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
                 <h2 class="mt-0 mb-20 mt-20">Les adhérents</h2>
-                <div class="responsive-table">
-                    <?php
-                    $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
-                    $status_active = 'active';
-                    $stmt1->bind_param("s", $status_active);
-                    $stmt1->execute();
-                    $result1 = $stmt1->get_result();
-                    ?>
-                    <table class="fs-15 w-full" id="adherent-list">
-                        <thead>
-                            <tr>
-                                <th>Nom complet</th>
-                                <th>Identifiant</th>
-                                <th>Mot de passe</th>
-                                <th>Sport</th>
-                                <th>Date d'inscription</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            if ($result1->num_rows > 0) {
-                                while ($row1 = $result1->fetch_assoc()) {
-                                    echo "<tr data-branch='" . htmlspecialchars($row1['type']) . "'>";
-                                    echo "<td>" . htmlspecialchars($row1['prenom'] . " " . $row1['nom']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row1['identifier']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row1['date_naissance']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row1['type']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row1['date_adhesion']) . "</td>";
-                                    $identifiant = $row1['identifier'];
-                                    echo "<td>
-                                            <a href='generate_excel.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-c-60'>imprimer</span></a>
-                                          </td>";
-                                    echo "</tr>";
+                <form action="generate_excel.php" method="post" id="adherent-form">
+                    <div class="exam-session-select">
+                        <label for="exam-session">Sélectionnez la session d'examen:</label>
+                        <select name="exam-session" id="exam-session">
+                            <option value="janvier">Janvier</option>
+                            <option value="juin">Juin</option>
+                        </select>
+                    </div>
+                    <div class="responsive-table">
+                        <?php
+                        $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
+                        $status_active = 'active';
+                        $stmt1->bind_param("s", $status_active);
+                        $stmt1->execute();
+                        $result1 = $stmt1->get_result();
+                        ?>
+                        <table class="fs-15 w-full" id="adherent-list">
+                            <thead>
+                                <tr>
+                                    <th>Nom complet</th>
+                                    <th>Identifiant</th>
+                                    <th>Date de naissance</th>
+                                    <th>Sport</th>
+                                    <th>Date d'inscription</th>
+                                    <th>
+                                        <input type="checkbox" id="select-all">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if ($result1->num_rows > 0) {
+                                    while ($row1 = $result1->fetch_assoc()) {
+                                        echo "<tr data-branch='" . htmlspecialchars($row1['type']) . "'>";
+                                        echo "<td>" . htmlspecialchars($row1['prenom'] . " " . $row1['nom']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row1['identifier']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row1['date_naissance']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row1['type']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row1['date_adhesion']) . "</td>";
+                                        echo "<td>
+                                <input type='checkbox' name='selected_adherents[]' value='" . htmlspecialchars($row1['identifier']) . "' class='adherent-checkbox'>
+                              </td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "</tbody></table>";
+                                    echo "<div class='no-results'>Aucun adhérent trouvé</div>";
                                 }
-                            } else {
-                                echo "</tbody></table>";
-                                echo "<div class='no-results'>Aucun adhérent trouvé</div>";
-                            }
-                            $stmt1->close();
-                            $conn->close();
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
+                                $stmt1->close();
+                                $conn->close();
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Imprimer</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('select-all').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.adherent-checkbox');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+    </script>
 </body>
 
 </html>

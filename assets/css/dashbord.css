@@ -257,7 +257,8 @@ ul {
 /* End Contant */
 /* personne Contant */
 .personne-page {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: 
+    repeat(auto-fill, minmax(300px, 1fr));
 }
 @media (max-width: 767px) {
     .personne-page {
@@ -961,4 +962,21 @@ input[type="checkbox"]:hover {
 #file-upload-filename {
     padding: 8px;
     flex-grow: 1;
+}
+.troph_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+.troph_container i {
+    color: var(--color-60);
+    font-size: 64px;
+    margin-bottom: 10px;
+}
+.edit-btn {
+    background-color: #4CAF50;
+}
+.edit-btn, .delete-btn, .save-btn {
+    color: var(--color-30);
 }

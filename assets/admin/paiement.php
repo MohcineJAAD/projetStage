@@ -14,6 +14,18 @@ $type_taekwondo = 'Taekwondo';
 $stmt_taekwondo->bind_param("ss", $status, $type_taekwondo);
 $stmt_taekwondo->execute();
 $result_taekwondo = $stmt_taekwondo->get_result();
+
+$stmt_aerobicf = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
+$type_aerobicf = 'aerobicf';
+$stmt_aerobicf->bind_param("ss", $status, $type_aerobicf);
+$stmt_aerobicf->execute();
+$result_aerobicf = $stmt_aerobicf->get_result();
+
+$stmt_aerobicm = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
+$type_aerobicm = 'aerobicm';
+$stmt_aerobicm->bind_param("ss", $status, $type_aerobicm);
+$stmt_aerobicm->execute();
+$result_aerobicm = $stmt_aerobicm->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -40,6 +52,13 @@ $result_taekwondo = $stmt_taekwondo->get_result();
             <?php require 'header.php'; ?>
             <h1 class="p-relative">Paiement</h1>
             <div class="accordion-container">
+                <div class="options w-full m-20">
+                    <div class="branch-filter mt-10 ">
+                        <a href='generate_excel_month.php' class="btn-shape bg-c-60 color-fff active mb-10">pas payé le mois.</a>
+                        <a href='generate_excel_adherence.php' class="btn-shape bg-c-60 color-fff active mb-10">pas payé l'adhesion.</a>
+                        <a href='generate_excel_assurance.php' class="btn-shape bg-c-60 color-fff active mb-10">pas payé l'assurance.</a>
+                    </div>
+                </div>
                 <div class="accordion-item m-20">
                     <div class="accordion-header">
                         <span>Fullcontact</span>
@@ -91,6 +110,70 @@ $result_taekwondo = $stmt_taekwondo->get_result();
                                 </thead>
                                 <tbody>
                                     <?php while ($row = $result_taekwondo->fetch_assoc()) : ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
+                                            <td><?= htmlspecialchars($row['identifier']) ?></td>
+                                            <td><?= htmlspecialchars($row['type']) ?></td>
+                                            <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
+                                            <td><a href='paiement_child.php?id=<?php echo $row['identifier'] ?>&date=<?php echo date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+                <div class="accordion-item m-20">
+                    <div class="accordion-header">
+                        <span>Aérobic / femmes</span>
+                        <span class="toggle-icon">></span>
+                    </div>
+                    <div class="accordion-content">
+                        <form class="horaire responsive-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nom complet</th>
+                                        <th>Identifiant</th>
+                                        <th>Sport</th>
+                                        <th>Date d'inscription</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php while ($row = $result_aerobicf->fetch_assoc()) : ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
+                                            <td><?= htmlspecialchars($row['identifier']) ?></td>
+                                            <td><?= htmlspecialchars($row['type']) ?></td>
+                                            <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
+                                            <td><a href='paiement_child.php?id=<?php echo $row['identifier'] ?>&date=<?php echo date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+                <div class="accordion-item m-20">
+                    <div class="accordion-header">
+                        <span>Aérobic / Hommes</span>
+                        <span class="toggle-icon">></span>
+                    </div>
+                    <div class="accordion-content">
+                        <form class="horaire responsive-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nom complet</th>
+                                        <th>Identifiant</th>
+                                        <th>Sport</th>
+                                        <th>Date d'inscription</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php while ($row = $result_aerobicm->fetch_assoc()) : ?>
                                         <tr>
                                             <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
                                             <td><?= htmlspecialchars($row['identifier']) ?></td>

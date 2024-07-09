@@ -7,7 +7,24 @@ if (isset($_SESSION['message'])) {
     $id = $_SESSION['message'];
     unset($_SESSION['message']);
 }
+
+// Database connection
+require 'assets/php/db_connection.php';
+
+// Fetch timetable data
+$sql = "SELECT * FROM schedule ORDER BY FIELD(day, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'), timeslot";
+$result = $conn->query($sql);
+
+$timetable = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $timetable[$row['day']][$row['timeslot']] = $row['arabic_name'];
+    }
+}
+
+$conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -73,54 +90,27 @@ if (isset($_SESSION['message'])) {
                 <thead>
                     <tr>
                         <th>Jour</th>
-                        <th>Taekwondo</th>
-                        <th>Full Contact</th>
-                        <th>Aérobic</th>
+                        <th>19:30-20:30</th>
+                        <th>20:30-21:30</th>
+                        <th>21:30-22:30</th>
+                        <th>22:30-23:30</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th>Lundi</th>
-                        <td>18:00 - 19:00</td>
-                        <td>19:00 - 20:00</td>
-                        <td>20:00 - 21:00</td>
-                    </tr>
-                    <tr>
-                        <th>Mardi</th>
-                        <td>18:00 - 19:00</td>
-                        <td>19:00 - 20:00</td>
-                        <td>20:00 - 21:00</td>
-                    </tr>
-                    <tr>
-                        <th>Mercredi</th>
-                        <td>18:00 - 19:00</td>
-                        <td>19:00 - 20:00</td>
-                        <td>20:00 - 21:00</td>
-                    </tr>
-                    <tr>
-                        <th>Jeudi</th>
-                        <td>18:00 - 19:00</td>
-                        <td>19:00 - 20:00</td>
-                        <td>20:00 - 21:00</td>
-                    </tr>
-                    <tr>
-                        <th>Vendredi</th>
-                        <td>18:00 - 19:00</td>
-                        <td>19:00 - 20:00</td>
-                        <td>20:00 - 21:00</td>
-                    </tr>
-                    <tr>
-                        <th>Samedi</th>
-                        <td>10:00 - 11:00</td>
-                        <td>11:00 - 12:00</td>
-                        <td>12:00 - 13:00</td>
-                    </tr>
-                    <tr>
-                        <th>Dimanche</th>
-                        <td>Fermé</td>
-                        <td>Fermé</td>
-                        <td>Fermé</td>
-                    </tr>
+                    <?php
+                    $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+                    $timeSlots = ['19:30:00-20:30:00', '20:30:00-21:30:00', '21:30:00-22:30:00', '22:30:00-23:30:00'];
+                    
+                    foreach ($days as $day) {
+                        echo "<tr>";
+                        echo "<th>{$day}</th>";
+                        foreach ($timeSlots as $time) {
+                            $sport = isset($timetable[$day][$time]) ? $timetable[$day][$time] : 'مغلق';
+                            echo "<td>{$sport}</td>";
+                        }
+                        echo "</tr>";
+                    }
+                    ?>
                 </tbody>
             </table>
         </div>
@@ -188,39 +178,17 @@ if (isset($_SESSION['message'])) {
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
             }
-        });
 
-        const userData = {
-            identifier: "<?php echo $id; ?>",
-            clubAddress: "123 Sports Club St, Cityville, State 12345",
-            adminPhone: "+1 (234) 567-8900"
-        };
-
-        // Show the popup when the page loads if identifier is not empty
-        window.onload = function() {
-            if (userData.identifier) {
-                document.getElementById('modal').style.display = 'block';
-                document.getElementById('popup').style.display = 'block';
-
-                // Set the dynamic content
-                document.getElementById('user-identifier').textContent = userData.identifier;
-                document.getElementById('club-address').textContent = userData.clubAddress;
-                document.getElementById('admin-phone').textContent = userData.adminPhone;
+            function closePopup() {
+                document.getElementById('popup').style.display = 'none';
             }
-        }
 
-        // Function to close the popup
-        function closePopup() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('popup').style.display = 'none';
-        }
-
-        // Close popup when clicking outside
-        document.getElementById('modal').addEventListener('click', closePopup);
-
-        // Prevent closing when clicking inside the popup
-        document.getElementById('popup').addEventListener('click', function(event) {
-            event.stopPropagation();
+            if ('<?php echo $id; ?>' !== '') {
+                document.getElementById('user-identifier').textContent = '<?php echo $id; ?>';
+                document.getElementById('club-address').textContent = '123 Rue hay el hassani, Dakhla, Maroc';
+                document.getElementById('admin-phone').textContent = '+212 123 456 789';
+                document.getElementById('popup').style.display = 'block';
+            }
         });
     </script>
 </body>
