@@ -2,19 +2,42 @@
 require "../php/db_connection.php";
 session_start();
 
-$stmt_fullcontact = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
 $status = 'active';
-$type_fullcontact = 'Fullcontact';
-$stmt_fullcontact->bind_param("ss", $status, $type_fullcontact);
-$stmt_fullcontact->execute();
-$result_fullcontact = $stmt_fullcontact->get_result();
 
-$stmt_taekwondo = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
-$type_taekwondo = 'Taekwondo';
-$stmt_taekwondo->bind_param("ss", $status, $type_taekwondo);
-$stmt_taekwondo->execute();
-$result_taekwondo = $stmt_taekwondo->get_result();
+// Prepare statements for each type of adherent
+$types = ['Fullcontact', 'Taekwondo', 'aerobicf', 'aerobicm'];
+$results = [];
+foreach ($types as $type) {
+    $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
+    $stmt->bind_param("ss", $status, $type);
+    $stmt->execute();
+    $results[$type] = $stmt->get_result();
+}
+
+// Handle the form submission for filtering payment history
+$filter_id = $_GET['id'] ?? '';
+$filter_date = $_GET['datePaiemnt'] ?? '';
+
+$payments_query = "SELECT * FROM payments WHERE 1";
+if ($filter_id) {
+    $payments_query .= " AND identifier = ?";
+}
+if ($filter_date) {
+    $payments_query .= " AND payment_date = ?";
+}
+
+$stmt_payments = $conn->prepare($payments_query);
+if ($filter_id && $filter_date) {
+    $stmt_payments->bind_param("ss", $filter_id, $filter_date);
+} elseif ($filter_id) {
+    $stmt_payments->bind_param("s", $filter_id);
+} elseif ($filter_date) {
+    $stmt_payments->bind_param("s", $filter_date);
+}
+$stmt_payments->execute();
+$result_payments = $stmt_payments->get_result();
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -23,6 +46,7 @@ $result_taekwondo = $stmt_taekwondo->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/framework.css">
     <link rel="stylesheet" href="../css/dashbord.css">
+    <link rel="stylesheet" href="../css/master1.css">
     <link rel="stylesheet" href="../css/normalize.css">
     <link rel="stylesheet" href="../css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,77 +63,110 @@ $result_taekwondo = $stmt_taekwondo->get_result();
         <div class="content w-full">
             <?php require 'header.php'; ?>
             <h1 class="p-relative">Paiement</h1>
-            <div class="accordion-container">
-                <div class="accordion-item m-20">
-                    <div class="accordion-header">
-                        <span>Fullcontact</span>
-                        <span class="toggle-icon">></span>
-                    </div>
-                    <div class="accordion-content">
-                        <form class="horaire responsive-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Nom complet</th>
-                                        <th>Identifiant</th>
-                                        <th>Sport</th>
-                                        <th>Date d'inscription</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($row = $result_fullcontact->fetch_assoc()) : ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
-                                            <td><?= htmlspecialchars($row['identifier']) ?></td>
-                                            <td><?= htmlspecialchars($row['type']) ?></td>
-                                            <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
-                                            <td><a href='paiement_child.php?id=<?php echo $row['identifier'] ?>&date=<?php echo date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
-                        </form>
-                    </div>
+            <!-- <div class="options w-full m-20">
+                <div class="branch-filter mt-10">
+                    <a href='generate_excel_month.php' class="btn-shape bg-c-60 color-fff active mb-10">mois.</a>
+                    <a href='generate_excel_adherence.php' class="btn-shape bg-c-60 color-fff active mb-10">l'adhesion.</a>
+                    <a href='generate_excel_assurance.php' class="btn-shape bg-c-60 color-fff active mb-10">l'assurance.</a>
                 </div>
-                <div class="accordion-item m-20">
-                    <div class="accordion-header">
-                        <span>Taekwondo</span>
-                        <span class="toggle-icon">></span>
+            </div>
+             -->
+            <div class="absences p-20 bg-fff rad-10 m-20">
+                <div class="accordion-container">
+                    <div class="options w-full m-20">
+                        <div class="branch-filter mt-10 mb-10">
+                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_month.php'>mois.</a></button>
+                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_adherence.php'>l'adhesion.</a></button>
+                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_assurance.php'>l'assurance.</a></button>
+                        </div>
                     </div>
-                    <div class="accordion-content">
-                        <form class="horaire responsive-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Nom complet</th>
-                                        <th>Identifiant</th>
-                                        <th>Sport</th>
-                                        <th>Date d'inscription</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($row = $result_taekwondo->fetch_assoc()) : ?>
+                    <div class="accordion-item m-20">
+                        <div class="accordion-header">
+                            <span>Historique</span>
+                            <span class="toggle-icon">></span>
+                        </div>
+                        <div class="accordion-content">
+                            <form class="horaire responsive-table" method="get" action="">
+                                <div class="row">
+                                    <div class="input-field">
+                                        <label for="datePaiemnt">Date paiement</label>
+                                        <input type="date" id="datePaiemnt" name="datePaiemnt" value="<?= htmlspecialchars($filter_date) ?>">
+                                    </div>
+                                    <div class="input-field">
+                                        <label for="id">Adhérent</label>
+                                        <input type="text" id="id" name="id" placeholder="Entrez l'identifiant" value="<?= htmlspecialchars($filter_id) ?>">
+                                    </div>
+                                    <div class="input-field">
+                                        <button type="submit" class="btn-shape bg-c-60 color-fff">Filtrer</button>
+                                    </div>
+                                </div>
+                                <table>
+                                    <thead>
                                         <tr>
-                                            <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
-                                            <td><?= htmlspecialchars($row['identifier']) ?></td>
-                                            <td><?= htmlspecialchars($row['type']) ?></td>
-                                            <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
-                                            <td><a href='paiement_child.php?id=<?php echo $row['identifier'] ?>&date=<?php echo date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
+                                            <th>Identifiant</th>
+                                            <th>Type</th>
+                                            <th>Montant</th>
+                                            <th>Date paiement</th>
+                                            <th>Type de paiement</th>
                                         </tr>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
-                        </form>
+                                    </thead>
+                                    <tbody>
+                                        <?php while ($row = $result_payments->fetch_assoc()) : ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($row['identifier']) ?></td>
+                                                <td><?= htmlspecialchars($row['type']) ?></td>
+                                                <td><?= htmlspecialchars($row['amount']) ?></td>
+                                                <td><?= htmlspecialchars($row['payment_date']) ?></td>
+                                                <td><?= htmlspecialchars($row['type']) ?></td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
                     </div>
+
+                    <?php foreach ($types as $type) : ?>
+                        <div class="accordion-item m-20">
+                            <div class="accordion-header">
+                                <span><?= htmlspecialchars(ucfirst($type)) ?></span>
+                                <span class="toggle-icon">></span>
+                            </div>
+                            <div class="accordion-content">
+                                <form class="horaire responsive-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Nom complet</th>
+                                                <th>Identifiant</th>
+                                                <th>Sport</th>
+                                                <th>Date d'inscription</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php while ($row = $results[$type]->fetch_assoc()) : ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
+                                                    <td><?= htmlspecialchars($row['identifier']) ?></td>
+                                                    <td><?= htmlspecialchars($row['type']) ?></td>
+                                                    <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
+                                                    <td><a href='paiement_child.php?id=<?= $row['identifier'] ?>&date=<?= date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
+                                                </tr>
+                                            <?php endwhile; ?>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Accordion functionality
             const accordionItems = document.querySelectorAll('.accordion-item');
             accordionItems.forEach(item => {
                 const header = item.querySelector('.accordion-header');
@@ -117,12 +174,10 @@ $result_taekwondo = $stmt_taekwondo->get_result();
                 const icon = header.querySelector('.toggle-icon');
                 header.addEventListener('click', function() {
                     const isOpen = content.classList.contains('open');
-                    // Close all accordions
                     accordionItems.forEach(acc => {
                         acc.querySelector('.accordion-content').classList.remove('open');
                         acc.querySelector('.toggle-icon').classList.remove('rotate');
                     });
-                    // Toggle current accordion
                     if (!isOpen) {
                         content.classList.add('open');
                         icon.classList.add('rotate');
@@ -133,8 +188,7 @@ $result_taekwondo = $stmt_taekwondo->get_result();
                 });
             });
         });
-    </script>
-    <script>
+
         <?php
         if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
             $status_message = $_SESSION['message'];

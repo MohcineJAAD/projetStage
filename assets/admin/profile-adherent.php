@@ -27,6 +27,8 @@
             <div class="profile-container m-20 bg-fff rad-10">
                 <div class="profile-header">
                     <?php
+                    // Initialize the $trophies variable to an empty array
+                    $trophies = [];
                     if (isset($_GET['id'])) {
                         $id = urldecode($_GET['id']);
                         $stmt = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
@@ -43,7 +45,7 @@
                             $type = $row['type'] ? $row['type'] : "N/A";
                             $date_adhesion = $row['date_adhesion'];
                             $BC_path = $row['BC_path'];
-                            $image = "../uploads/" . $row['image_path'];
+                            $image = $row['image_path'] ? "../uploads/" . $row['image_path'] : "../images/defult_image.png";
                             $guardian_name = $row['guardian_name'];
                             $guardian_phone = $row['guardian_phone'];
                             $second_guardian_phone = $row['second_guardian_phone'];
@@ -54,13 +56,19 @@
                             $next_belt = $row['next_belt'];
                             $identifiant = $row['identifier'];
                             $licence = $row['licence'];
-                        } else {
+                        } else
                             echo "<h3 class='profile-name m-0'>Information non disponible</h3>";
-                        }
                         $stmt->close();
-                    } else {
+                        $stmt = $conn->prepare("SELECT * FROM trophies WHERE adherent_id = ?");
+                        $stmt->bind_param("s", $id);
+                        $stmt->execute();
+                        $trophies_result = $stmt->get_result();
+                        if ($trophies_result->num_rows > 0)
+                            while ($trophy = $trophies_result->fetch_assoc())
+                                $trophies[] = $trophy;
+                        $stmt->close();
+                    } else
                         echo "<h3 class='profile-name m-0'>Identifiant non fourni</h3>";
-                    }
                     ?>
                 </div>
                 <div class="p-20 mb-20">
@@ -189,10 +197,6 @@
                                     <label for="note">Note</label>
                                     <textarea id="note" name="note" placeholder="Entrez des notes" style="width: 100%;" disabled></textarea>
                                 </div>
-                                <div class="input-field">
-                                    <label for="trophies">Trophies</label>
-                                    <textarea id="trophies" name="trophies" placeholder="Entrez des trophées" style="width: 100%;" disabled></textarea>
-                                </div>
                             </div>
                         </div>
                         <div class="file-upload">
@@ -216,8 +220,53 @@
                     </form>
                 </div>
             </div>
+
+            <div class="profile-container m-20 bg-fff rad-10">
+                <div class="p-20 mb-20">
+                    <h2>Titres</h2>
+                    <div class="wrapper d-grid gap-20">
+                        <div class="add-card cards rad-6 p-20 p-relative txt-c" id="add-button">
+                            <div class="add-content">
+                                <div class="circle-dashed">
+                                    <i class="fa-solid fa-plus"></i>
+                                </div>
+                                <p class="mt-10 color-333">Ajouter</p>
+                            </div>
+                        </div>
+                        <?php foreach ($trophies as $trophy) : ?>
+                            <div class="cards rad-10 txt-c-mobile block-mobile">
+                                <div class="card-content">
+                                    <h3><?php echo htmlspecialchars($trophy['description']); ?></h3>
+                                    <p class="value"><?php echo htmlspecialchars($trophy['created_at']); ?></p>
+                                    <i class="fa-solid fa-trophy fa-fw" style="color: #203a85;"></i>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div id="addCardModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Ajouter un Titre</h2>
+            <form id="addCardForm" action="../php/addTrophy.php" method="POST">
+                <div class="section">
+                    <div class="row">
+                        <div class="input-field">
+                            <label for="cardDescription">Description :</label>
+                            <textarea id="cardDescription" name="trophyDescription" placeholder="Entrez description" style="width: 100%;" required></textarea>
+                            <input type="hidden" name="identifier" value="<?php echo htmlspecialchars($identifiant); ?>">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="save-btn btn-shape mb-10">Ajouter</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         document.getElementById('fileUpload').addEventListener('change', function(event) {
             const fileInput = event.target;
@@ -248,6 +297,25 @@
             });
             document.querySelector('.modify-btn').classList.add('hidden');
             document.querySelector('.save-btn').classList.remove('hidden');
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('addCardModal');
+            const addCardButton = document.querySelector('.add-card');
+            const closeButton = modal.querySelector('.close');
+
+            addCardButton.addEventListener('click', () => {
+                modal.style.display = 'flex';
+            });
+
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
         });
     </script>
     <script>

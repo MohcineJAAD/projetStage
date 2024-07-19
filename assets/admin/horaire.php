@@ -1,38 +1,32 @@
 <?php
-require '../php/db_connect.php';
+require '../php/db_connection.php';
 
-// Fetch subjects
-$mat = ["EDI", "MCOO", "GL", "FR", "SGBD", "POO", "ENG", "MATH", "GP", "QTM", "AR", "DEV WEB", "TEC", "C/S", "PFE"];
-$classes = ["1DSI", "2DSI", "1PME", "2PME"];
-$days = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+// Define the sports array with adherent types and Arabic translations
+$sports = [
+    ["type" => "fullcontact", "arabic" => "الفول كنتاكت شبان و كبار"],
+    ["type" => "taekwondo", "arabic" => "التايكوندو كتاكيت و صغار"],
+    ["type" => "taekwondo", "arabic" => "التايكوندو فتيان و فتيات"],
+    ["type" => "taekwondo", "arabic" => "التايكوندو شبان و كبار"],
+    ["type" => "aerobics for women", "arabic" => "اللياقة البدنية نساء"],
+    ["type" => "aerobics for men", "arabic" => "اللياقة البدنية رجال"]
+];
 
-// Fetch professors affiliated with each class
-$professorsByClass = [];
-foreach ($classes as $class) {
-    $profQuery = "SELECT p.id, CONCAT('Pr.', u.nom, ' ', u.prenom) as name, matricule 
-                  FROM professeurs p
-                  JOIN utilisateurs u ON p.matricule = u.identifiant
-                  WHERE branche LIKE '%$class%'";
-    $profResult = $conn->query($profQuery);
-    while ($row = $profResult->fetch_assoc()) {
-        $professorsByClass[$class][$row['matricule']] = ['id' => $row['id'], 'name' => $row['name']];
+// Define the days array
+$days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+// Initialize schedule array
+$schedule = [];
+
+// Fetch current schedule
+$sql = "SELECT * FROM schedule";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $schedule[$row['day']][$row['timeslot']] = $row['sport_type'];
     }
 }
-
-// Fetch schedule data from database
-$scheduleQuery = "SELECT h.*, CONCAT('Pr.', u.nom, ' ', u.prenom) as professor_name, p.matricule 
-                  FROM horaires h 
-                  JOIN professeurs p ON h.professeur_id = p.id 
-                  JOIN utilisateurs u ON p.matricule = u.identifiant";
-$result = $conn->query($scheduleQuery);
-$schedule = [];
-while ($row = $result->fetch_assoc()) {
-    $schedule[$row['classe']][$row['jour']][$row['heure_debut'] . '-' . $row['heure_fin']] = [
-        'subject' => $row['matiere'],
-        'professor' => $row['professor_name'],
-        'matricule' => $row['matricule']
-    ];
-}
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -47,6 +41,8 @@ while ($row = $result->fetch_assoc()) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <title>Dashboard</title>
 </head>
 
@@ -57,73 +53,58 @@ while ($row = $result->fetch_assoc()) {
             <?php require 'header.php'; ?>
             <h1 class="p-relative">L'emploi du temps</h1>
             <div class="accordion-container">
-                <?php foreach ($classes as $class) : ?>
-                    <div class="accordion-item m-20">
-                        <div class="accordion-header">
-                            <span><?= $class ?></span>
-                            <span class="toggle-icon">></span>
-                        </div>
-                        <div class="accordion-content">
-                            <form class="horaire responsive-table" method="post" action="../php/opHoraire.php">
-                                <input type="hidden" name="class" value="<?= $class ?>">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Jour/Heure</th>
-                                            <th colspan="2">8-10</th>
-                                            <th colspan="2">10-12</th>
-                                            <th colspan="2">14-16</th>
-                                            <th colspan="2">16-18</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($days as $day) : ?>
-                                            <tr>
-                                                <th><?= $day ?></th>
-                                                <?php
-                                                $timeSlots = [
-                                                    "08:00:00-10:00:00",
-                                                    "10:00:00-12:00:00",
-                                                    "14:00:00-16:00:00",
-                                                    "16:00:00-18:00:00"
-                                                ];
-                                                foreach ($timeSlots as $time) :
-                                                    $subject = $schedule[$class][$day][$time]['subject'] ?? '--';
-                                                    $professor = $schedule[$class][$day][$time]['professor'] ?? '--';
-                                                    $matricule = $schedule[$class][$day][$time]['matricule'] ?? '--';
-                                                ?>
-                                                    <td colspan="2">
-                                                        <select name="subject[<?= $day ?>][<?= $time ?>]" class="subject" disabled>
-                                                            <option><?= $subject ?></option>
-                                                            <option>--</option>
-                                                            <?php foreach ($mat as $value) : ?>
-                                                                <option><?= $value ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-
-                                                        <select name="professor[<?= $day ?>][<?= $time ?>]" class="professor" disabled>
-                                                            <option value="<?= $matricule ?>"><?= $professor ?></option>
-                                                            <option value="--">--</option>
-                                                            <?php foreach ($professorsByClass[$class] as $matriculeKey => $value) : ?>
-                                                                <option value="<?= $matriculeKey ?>"><?= $value['name'] ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                        <input type="hidden" name="matricule[<?= $day ?>][<?= $time ?>]" value="<?= $matricule ?>">
-                                                    </td>
-                                                <?php endforeach; ?>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                                <div class="action-buttons">
-                                    <button type="button" class="edit-btn btn-shape mb-10"><i class="fas fa-edit"></i> Modifier</button>
-                                    <button type="submit" class="save-btn btn-shape mb-10 hidden"><i class="fas fa-save"></i> Sauvegarder</button>
-                                    <button type="submit" class="delete-btn btn-shape mb-10" name="delete" value="<?php echo $class; ?>"><i class="fas fa-trash"></i> Supprimer</button>
-                                </div>
-                            </form>
-                        </div>
+                <div class="accordion-item m-20">
+                    <div class="accordion-header">
+                        <span>emploi temp</span>
+                        <span class="toggle-icon">></span>
                     </div>
-                <?php endforeach; ?>
+                    <div class="accordion-content">
+                        <form class="horaire responsive-table" method="post" action="opHoraire.php">
+                            <input type="hidden" name="class" value="">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Jour/Heure</th>
+                                        <th>19:30-20:30</th>
+                                        <th>20:30-21:30</th>
+                                        <th>21:30-22:30</th>
+                                        <th>22:30-23:30</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($days as $day) : ?>
+                                        <tr>
+                                            <th><?= $day ?></th>
+                                            <?php
+                                            $timeSlots = [
+                                                "19:30:00-20:30:00",
+                                                "20:30:00-21:30:00",
+                                                "21:30:00-22:30:00",
+                                                "22:30:00-23:30:00"
+                                            ];
+                                            foreach ($timeSlots as $time) :
+                                            ?>
+                                                <td>
+                                                    <select name="sport[<?= $day ?>][<?= $time ?>]" class="sport" disabled>
+                                                        <option>--</option>
+                                                        <?php foreach ($sports as $sport) : ?>
+                                                            <option value="<?= $sport['type'] ?>" <?= isset($schedule[$day][$time]) && $schedule[$day][$time] == $sport['type'] ? 'selected' : '' ?>><?= $sport['arabic'] ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                            <?php endforeach; ?>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            <div class="action-buttons">
+                                <button type="button" class="edit-btn modify-btn btn-shape mb-10" ><i class="fas fa-edit"></i> Modifier</button>
+                                <button type="submit" class="save-btn btn-shape mb-10 hidden"><i class="fas fa-save"></i> Sauvegarder</button>
+                                <button type="submit" class="delete-btn btn-shape mb-10" name="delete" value="class_value_here"><i class="fas fa-trash"></i> Supprimer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -184,6 +165,27 @@ while ($row = $result->fetch_assoc()) {
                 });
             });
         });
+        <?php
+        if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
+            $status_message = $_SESSION['message'];
+            $status_type = $_SESSION['status'];
+            echo "showToast('" . addslashes($status_message) . "', '" . addslashes($status_type) . "');";
+            unset($_SESSION['message']);
+            unset($_SESSION['status']);
+        }
+        ?>
+
+        function showToast(message, type) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                backgroundColor: type === "error" ? "#FF3030" : "#2F8C37",
+                stopOnFocus: true
+            }).showToast();
+        }
     </script>
 </body>
 
