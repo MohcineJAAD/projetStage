@@ -3,10 +3,10 @@ require '../php/db_connection.php';
 
 // Define the sports array with adherent types and Arabic translations
 $sports = [
-    ["type" => "fullcontact", "arabic" => "الفول كنتاكت شبان و كبار"],
-    ["type" => "taekwondo", "arabic" => "التايكوندو كتاكيت و صغار"],
-    ["type" => "taekwondo", "arabic" => "التايكوندو فتيان و فتيات"],
-    ["type" => "taekwondo", "arabic" => "التايكوندو شبان و كبار"],
+    ["type" => "فول كونتاكت", "arabic" => "الفول كنتاكت شبان و كبار"],
+    ["type" => "تايكواندو", "arabic" => "التايكوندو كتاكيت و صغار"],
+    ["type" => "تايكواندو", "arabic" => "التايكوندو فتيان و فتيات"],
+    ["type" => "تايكواندو", "arabic" => "التايكوندو شبان و كبار"],
     ["type" => "aerobics for women", "arabic" => "اللياقة البدنية نساء"],
     ["type" => "aerobics for men", "arabic" => "اللياقة البدنية رجال"]
 ];

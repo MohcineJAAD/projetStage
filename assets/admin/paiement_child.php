@@ -73,14 +73,14 @@
     </style>
 </head>
 
-<body>
+<body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
             <?php require 'header.php'; ?>
-            <h1 class="p-relative">Paiement</h1>
+            <h1 class="p-relative">الدفع</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
-                <h2 class="mt-0 mb-20">Carte de paiement</h2>
+                <h2 class="mt-0 mb-20">بطاقة الدفع</h2>
                 <?php
                 $years = range(strftime("%Y", time()), 2010);
                 $identifier = isset($_GET['id']) ? $_GET['id'] : '';
@@ -98,9 +98,9 @@
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            if ($row['type'] == 'assurance') {
+                            if ($row['type'] == 'التأمين') {
                                 $annualPaid = true;
-                            } elseif ($row['type'] == 'adhesion') {
+                            } elseif ($row['type'] == 'الانخراط') {
                                 $adhesionPaid = true;
                             } else {
                                 $paymentMonth = date('n', strtotime($row['payment_date']));
@@ -113,7 +113,7 @@
                 }
                 ?>
                 <select id="seasonSelect" name="season" style="width: 100%; border-color: #333;" class="mb-20 p-10">
-                    <option value="">Sélectionner saison</option>
+                    <option value="">اختر الموسم</option>
                     <?php foreach ($years as $yearOption) : ?>
                         <option value="<?php echo $yearOption; ?>" <?php echo ($year == $yearOption) ? 'selected' : ''; ?>><?php echo $yearOption; ?></option>
                     <?php endforeach; ?>
@@ -125,10 +125,10 @@
                         <div class="flex-table">
                             <?php
                             $months = [
-                                1 => 'JANVIER', 2 => 'FÉVRIER', 3 => 'MARS',
-                                4 => 'AVRIL', 5 => 'MAI', 6 => 'JUIN',
-                                7 => 'JUILLET', 8 => 'AOÛT', 9 => 'SEPTEMBRE',
-                                10 => 'OCTOBRE', 11 => 'NOVEMBRE', 12 => 'DÉCEMBRE'
+                                1 => 'يناير', 2 => 'فبراير', 3 => 'مارس',
+                                4 => 'أبريل', 5 => 'مايو', 6 => 'يونيو',
+                                7 => 'يوليو', 8 => 'غشت', 9 => 'شتنبر',
+                                10 => 'أكتوبر', 11 => 'نونبر', 12 => 'دجنبر'
                             ];
                             foreach (array_chunk($months, 3, true) as $monthChunk) {
                                 echo '<div class="flex-row">';
@@ -145,12 +145,12 @@
                             ?>
                             <div class="flex-row">
                                 <div class="flex-cell<?php echo $annualPaid ? ' paid' : ''; ?>" style="flex: 1;">
-                                    <input type="checkbox" name="assurance" value="assurance" <?php echo $annualPaid ? 'checked' : ''; ?> disabled>
-                                    <h4>Assurance</h4>
+                                    <input type="checkbox" name="assurance" value="التأمين" <?php echo $annualPaid ? 'checked' : ''; ?> disabled>
+                                    <h4>التأمين</h4>
                                 </div>
                                 <div class="flex-cell<?php echo $adhesionPaid ? ' paid' : ''; ?>" style="flex: 1;">
-                                    <input type="checkbox" name="adhesion" value="adhesion" <?php echo $adhesionPaid ? 'checked' : ''; ?> disabled>
-                                    <h4>Adhésion Annuelle</h4>
+                                    <input type="checkbox" name="adhesion" value="الانخراط" <?php echo $adhesionPaid ? 'checked' : ''; ?> disabled>
+                                    <h4>الانخراط السنوي</h4>
                                 </div>
                             </div>
                         </div>

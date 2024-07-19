@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $healthStatus = $_POST['healthStatus'];
     $bloodType = $_POST['bloodType'];
     $licence = $_POST['licence'];
+    $note = $_POST['note'];
     
     // Retrieve existing file paths
     $stmt = $conn->prepare("SELECT image_path, BC_path FROM adherents WHERE identifier = ?");
@@ -33,8 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $BCFileName = $existingBCPath;
 
     // Handle new image upload
-    if (isset($_FILES['imageUpload']) && $_FILES['imageUpload']['error'] === UPLOAD_ERR_OK) 
-    {
+    if (isset($_FILES['imageUpload']) && $_FILES['imageUpload']['error'] === UPLOAD_ERR_OK) {
         $file_type = mime_content_type($_FILES['imageUpload']['tmp_name']);
         $allowed_types = ['image/jpeg', 'image/png'];
 
@@ -71,8 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Handle new birth certificate upload
-    if (isset($_FILES['BCUpload']) && $_FILES['BCUpload']['error'] === UPLOAD_ERR_OK)
-    {
+    if (isset($_FILES['BCUpload']) && $_FILES['BCUpload']['error'] === UPLOAD_ERR_OK) {
         $file_type = mime_content_type($_FILES['BCUpload']['tmp_name']);
         $allowed_types = ['application/pdf'];
 
@@ -109,8 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Update adherent information
-    $stmt = $conn->prepare("UPDATE adherents SET prenom = ?, nom = ?, date_naissance = ?, date_adhesion = ?, guardian_name = ?, guardian_phone = ?, second_guardian_phone = ?, address = ?, type = ?, current_belt = ?, next_belt = ?, poids = ?, health_status = ?, blood_type = ?, licence = ?, image_path = ?, BC_path = ? WHERE identifier = ?");
-    $stmt->bind_param("sssssssssssdssssss", $prenom, $nom, $birthDate, $adhesionDate, $guardianName, $guardianPhone, $secondGuardianPhone, $address, $sport, $beltLevel, $nextBeltLevel, $poids, $healthStatus, $bloodType, $licence, $imageFileName, $BCFileName, $identifier);
+    $stmt = $conn->prepare("UPDATE adherents SET prenom = ?, nom = ?, date_naissance = ?, date_adhesion = ?, guardian_name = ?, guardian_phone = ?, second_guardian_phone = ?, address = ?, type = ?, current_belt = ?, next_belt = ?, poids = ?, health_status = ?, blood_type = ?, licence = ?, image_path = ?, BC_path = ?, note = ? WHERE identifier = ?");
+    $stmt->bind_param("sssssssssssdsssssss", $prenom, $nom, $birthDate, $adhesionDate, $guardianName, $guardianPhone, $secondGuardianPhone, $address, $sport, $beltLevel, $nextBeltLevel, $poids, $healthStatus, $bloodType, $licence, $imageFileName, $BCFileName, $note, $identifier);
     
     if ($stmt->execute()) {
         $_SESSION['message'] = "Profil mis à jour avec succès.";

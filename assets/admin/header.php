@@ -15,10 +15,10 @@ $user_name = $_SESSION['user_name'];
 
 ?>
 
-<div class="head p-15 between-flex">
-    <h2 class="welcomUser">Bonjour, <?php echo $user_name; ?></h2>
+<div class="head p-15 between-flex" dir="rtl">
+    <h2 class="welcomUser">مرحبا, <?php echo $user_name; ?></h2>
     <a href="../php/logout.php" class="active d-flex align-c fs-14 color-000 rad-6 p-10">
         <i class="fa-solid fa-right-from-bracket fa-fw"></i>
-        <span class="fs-14 ml-10">Se déconnecter</span>
+        <span class="fs-14 ml-10">خروج </span>
     </a>
 </div>

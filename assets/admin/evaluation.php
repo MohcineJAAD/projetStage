@@ -50,8 +50,8 @@ session_start();
                     <div class="options w-full">
                         <div class="branch-filter mt-10 mb-10">
                             <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">Tous</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Taekwondo">Taekwondo</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Fullcontact">Fullcontact</button>
+                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="تايكواندو">تايكواندو</button>
+                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="فول كونتاكت">فول كونتاكت</button>
                         </div>
                     </div>
                     <table class="fs-15 w-full" id="adherent-list">

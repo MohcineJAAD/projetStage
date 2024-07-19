@@ -30,14 +30,14 @@ session_start();
     </style>
 </head>
 
-<body>
+<body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
             <?php require 'header.php'; ?>
-            <h1 class="p-relative">Gestion des adhérents</h1>
+            <h1 class="p-relative">إدارة المنخرطين</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
-                <h2 class="mt-0 mb-20">Les nouveaux inscriptions</h2>
+                <h2 class="mt-0 mb-20">التسجيلات جديدة</h2>
                 <?php
                 $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
                 $status = 'pending';
@@ -49,12 +49,12 @@ session_start();
                     <table class="fs-15 w-full">
                         <thead>
                             <tr>
-                                <th>Nom complet</th>
-                                <th>Identifiant</th>
-                                <th>Date de naissance</th>
-                                <th>Sport</th>
-                                <th>Date d'inscription</th>
-                                <th>Actions</th>
+                                <th>الاسم الكامل</th>
+                                <th>المعرف</th>
+                                <th>تاريخ الازدياد</th>
+                                <th>الرياضة</th>
+                                <th>تاريخ التسجيل</th>
+                                <th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -69,14 +69,14 @@ session_start();
                                     echo "<td>" . htmlspecialchars($row['type']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row['date_adhesion']) . "</td>";
                                     echo "<td>
-                                            <a href='../php/rejeter.php?id=$id' class='supprimer-btn'><span class='label btn-shape bg-f00'>Rejeter</span></a>
-                                            <a href='../php/accepter.php?id=$id' class='justification-btn'><span class='label btn-shape bg-green'>Accepter</span></a>
+                                            <a href='../php/rejeter.php?id=$id' class='supprimer-btn'><span class='label btn-shape bg-f00'>رفض</span></a>
+                                            <a href='../php/accepter.php?id=$id' class='justification-btn'><span class='label btn-shape bg-green'>قبول</span></a>
                                           </td>";
                                     echo "</tr>";
                                 }
                             } else {
                                 echo "</tbody></table>";
-                                echo "<div class='no-results'>Aucune inscription trouvée</div>";
+                                echo "<div class='no-results'>ليس هناك اي تسجيلات جديدة</div>";
                             }
                             $stmt->close();
                             ?>
@@ -84,12 +84,12 @@ session_start();
                     </table>
                 </div>
 
-                <h2 class="mt-0 mb-20 mt-20">Les adhérents</h2>
+                <h2 class="mt-0 mb-20 mt-20">المنخرطين</h2>
                 <div class="options w-full">
                     <div class="branch-filter mt-10 mb-10">
-                        <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">Tous</button>
-                        <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Taekwondo">Taekwondo</button>
-                        <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Fullcontact">Fullcontact</button>
+                        <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">الكل</button>
+                        <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="تايكواندو">تايكواندو</button>
+                        <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="فول كونتاكت">فول كونتاكت</button>
                     </div>
                 </div>
                 <div class="responsive-table">
@@ -103,11 +103,11 @@ session_start();
                     <table class="fs-15 w-full" id="adherent-list">
                         <thead>
                             <tr>
-                                <th>Nom complet</th>
-                                <th>Identifiant</th>
-                                <th>Sport</th>
-                                <th>Date d'inscription</th>
-                                <th>Actions</th>
+                                <th>الاسم الكامل</th>
+                                <th>المعرف</th>
+                                <th>الرياضة</th>
+                                <th>تاريخ الانخراط</th>
+                                <th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -121,8 +121,8 @@ session_start();
                                     echo "<td>" . htmlspecialchars($row1['date_adhesion']) . "</td>";
                                     $identifiant = $row1['identifier'];
                                     echo "<td>
-                                            <a href='profile-adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-c-60'>Profile</span></a>
-                                            <a href='../php/delete_adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-f00'>Supprimer</span></a>
+                                            <a href='profile-adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-c-60'>الملف الشخصي</span></a>
+                                            <a href='../php/delete_adherent.php?id={$identifiant}' class='supprimer-btn'><span class='label btn-shape bg-f00'>حذف</span></a>
                                           </td>";
                                     echo "</tr>";
                                 }

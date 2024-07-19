@@ -173,7 +173,7 @@ ul {
     height: 3px;
     position: absolute;
     bottom: -10px;
-    left: 0;
+    right: 0;
     border-radius: 10px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;

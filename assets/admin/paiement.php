@@ -5,7 +5,7 @@ session_start();
 $status = 'active';
 
 // Prepare statements for each type of adherent
-$types = ['Fullcontact', 'Taekwondo', 'aerobicf', 'aerobicm'];
+$types = ['فول كونتاكت', 'تايكواندو', 'إيروبيك / رجال', 'إيروبيك / سيدات'];
 $results = [];
 foreach ($types as $type) {
     $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
@@ -14,11 +14,10 @@ foreach ($types as $type) {
     $results[$type] = $stmt->get_result();
 }
 
-// Handle the form submission for filtering payment history
 $filter_id = $_GET['id'] ?? '';
 $filter_date = $_GET['datePaiemnt'] ?? '';
 
-$payments_query = "SELECT * FROM payments WHERE 1";
+$payments_query = "SELECT * FROM payments join adherents on payments.identifier = adherents.identifier WHERE 1";
 if ($filter_id) {
     $payments_query .= " AND identifier = ?";
 }
@@ -57,67 +56,59 @@ $result_payments = $stmt_payments->get_result();
     <title>Dashboard</title>
 </head>
 
-<body>
+<body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
             <?php require 'header.php'; ?>
-            <h1 class="p-relative">Paiement</h1>
-            <!-- <div class="options w-full m-20">
-                <div class="branch-filter mt-10">
-                    <a href='generate_excel_month.php' class="btn-shape bg-c-60 color-fff active mb-10">mois.</a>
-                    <a href='generate_excel_adherence.php' class="btn-shape bg-c-60 color-fff active mb-10">l'adhesion.</a>
-                    <a href='generate_excel_assurance.php' class="btn-shape bg-c-60 color-fff active mb-10">l'assurance.</a>
-                </div>
-            </div>
-             -->
+            <h1 class="p-relative">إدارة الدفع</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
                 <div class="accordion-container">
                     <div class="options w-full m-20">
                         <div class="branch-filter mt-10 mb-10">
-                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_month.php'>mois.</a></button>
-                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_adherence.php'>l'adhesion.</a></button>
-                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_assurance.php'>l'assurance.</a></button>
+                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_month.php'>لائحة الشهر</a></button>
+                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_adherence.php'>لائحة الاشتراك</a></button>
+                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_assurance.php'>لائحة التأمين</a></button>
                         </div>
                     </div>
                     <div class="accordion-item m-20">
                         <div class="accordion-header">
-                            <span>Historique</span>
+                            <span>السجل</span>
                             <span class="toggle-icon">></span>
                         </div>
                         <div class="accordion-content">
                             <form class="horaire responsive-table" method="get" action="">
                                 <div class="row">
                                     <div class="input-field">
-                                        <label for="datePaiemnt">Date paiement</label>
+                                        <label for="datePaiemnt">تاريخ الدفع</label>
                                         <input type="date" id="datePaiemnt" name="datePaiemnt" value="<?= htmlspecialchars($filter_date) ?>">
                                     </div>
                                     <div class="input-field">
-                                        <label for="id">Adhérent</label>
-                                        <input type="text" id="id" name="id" placeholder="Entrez l'identifiant" value="<?= htmlspecialchars($filter_id) ?>">
+                                        <label for="id">المنخرط</label>
+                                        <input type="text" id="id" name="id" placeholder="ادخل المعرف" value="<?= htmlspecialchars($filter_id) ?>">
                                     </div>
                                     <div class="input-field">
-                                        <button type="submit" class="btn-shape bg-c-60 color-fff">Filtrer</button>
+                                        <button type="submit" class="btn-shape bg-c-60 color-fff">بحث</button>
                                     </div>
                                 </div>
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th>Identifiant</th>
-                                            <th>Type</th>
-                                            <th>Montant</th>
-                                            <th>Date paiement</th>
-                                            <th>Type de paiement</th>
+                                            <th>الاسم الكامل</th>
+                                            <th>المعرف</th>
+                                            <th>نوع الدفع</th>
+                                            <th>المبلغ</th>
+                                            <th>تاريخ الدفع</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php while ($row = $result_payments->fetch_assoc()) : ?>
                                             <tr>
+                                                <td><?= htmlspecialchars($row['nom']." ".$row['nom']) ?></td>
                                                 <td><?= htmlspecialchars($row['identifier']) ?></td>
                                                 <td><?= htmlspecialchars($row['type']) ?></td>
                                                 <td><?= htmlspecialchars($row['amount']) ?></td>
                                                 <td><?= htmlspecialchars($row['payment_date']) ?></td>
-                                                <td><?= htmlspecialchars($row['type']) ?></td>
                                             </tr>
                                         <?php endwhile; ?>
                                     </tbody>
@@ -137,11 +128,11 @@ $result_payments = $stmt_payments->get_result();
                                     <table>
                                         <thead>
                                             <tr>
-                                                <th>Nom complet</th>
-                                                <th>Identifiant</th>
-                                                <th>Sport</th>
-                                                <th>Date d'inscription</th>
-                                                <th>Actions</th>
+                                                <th>الاسم الكامل</th>
+                                                <th>المعرف</th>
+                                                <th>الرياضة</th>
+                                                <th>تاريخ الاشتراك</th>
+                                                <th>اجراء</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -151,7 +142,7 @@ $result_payments = $stmt_payments->get_result();
                                                     <td><?= htmlspecialchars($row['identifier']) ?></td>
                                                     <td><?= htmlspecialchars($row['type']) ?></td>
                                                     <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
-                                                    <td><a href='paiement_child.php?id=<?= $row['identifier'] ?>&date=<?= date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>Paiement</span></a></td>
+                                                    <td><a href='paiement_child.php?id=<?= $row['identifier'] ?>&date=<?= date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>دفع</span></a></td>
                                                 </tr>
                                             <?php endwhile; ?>
                                         </tbody>

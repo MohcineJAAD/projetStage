@@ -95,10 +95,10 @@ $belts_full = ["أبيض", "أصفر", "برتقالي", "أخضر", "أزرق",
                                 <label for="sport">الرياضة</label>
                                 <select id="sport" name="sport">
                                     <option value="" disabled selected>اختر الرياضة</option>
-                                    <option value="Taekwondo">تايكواندو</option>
-                                    <option value="Fullcontact">فول كونتاكت</option>
-                                    <option value="aerobicm">إيروبيك / رجال</option>
-                                    <option value="aerobicf">إيروبيك / سيدات</option>
+                                    <option value="تايكواندو">تايكواندو</option>
+                                    <option value="فول كونتاكت">فول كونتاكت</option>
+                                    <option value="إيروبيك / رجال">إيروبيك / رجال</option>
+                                    <option value="إيروبيك / سيدات">إيروبيك / سيدات</option>
                                 </select>
                             </div>
                         </div>
@@ -141,9 +141,9 @@ $belts_full = ["أبيض", "أصفر", "برتقالي", "أخضر", "أزرق",
             const selectedSport = this.value;
             let belts = [];
 
-            if (selectedSport === 'Taekwondo') {
+            if (selectedSport === 'تايكواندو') {
                 belts = beltsTae;
-            } else if (selectedSport === 'Fullcontact') {
+            } else if (selectedSport === 'فول كونتاكت') {
                 belts = beltsFull;
             }
 

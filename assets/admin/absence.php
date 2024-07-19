@@ -53,19 +53,19 @@ unset($_SESSION['search_results']);
     </style>
 </head>
 
-<body>
+<body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
             <?php require 'header.php'; ?>
-            <h1 class="p-relative">Gestion des présences</h1>
+            <h1 class="p-relative">إدارة الحضور</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
-                <h2 class="mt-0 mb-20 mt-20">Recherche avancée</h2>
+                <h2 class="mt-0 mb-20 mt-20">بحث متقدم</h2>
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                     <div class="form-group">
-                        <label for="identifier">Rechercher par identifiant:</label>
+                        <label for="identifier">البحث عن طريق المعرف :</label>
                         <input type="text" id="identifier" name="identifier" class="form-control" required>
-                        <button type="submit" class="btn btn-primary mt-20">Rechercher</button>
+                        <button type="submit" class="btn btn-primary mt-20">بحث</button>
                     </div>
                 </form>
                 <?php
@@ -84,13 +84,13 @@ unset($_SESSION['search_results']);
                 ?>
             </div>
             <div class="absences p-20 bg-fff rad-10 m-20">
-                <h2 class="mt-0 mb-20 mt-20">Fiche d'absence</h2>
+                <h2 class="mt-0 mb-20 mt-20">استمارة الغياب</h2>
                 <div class="responsive-table">
                     <div class="options w-full">
                         <div class="branch-filter mt-10 mb-10">
-                            <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">Tous</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Taekwondo">Taekwondo</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="Fullcontact">Fullcontact</button>
+                            <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">الكل</button>
+                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="تايكواندو">تايكواندو</button>
+                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="فول كونتاكت">فول كونتاكت</button>
                         </div>
                     </div>
                 </div>
@@ -98,10 +98,10 @@ unset($_SESSION['search_results']);
                     <table class="fs-15 w-full" id="adherent-list">
                         <thead>
                             <tr>
-                                <th>Nom complet</th>
-                                <th>Identifiant</th>
-                                <th>Sport</th>
-                                <th>Absente</th>
+                                <th>الاسم الكامل</th>
+                                <th>المعرف</th>
+                                <th>الرياضة</th>
+                                <th>الغياب</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -139,7 +139,7 @@ unset($_SESSION['search_results']);
                         </tbody>
                     </table>
 
-                    <button type="submit" class="btn mt-20">Enregistrer</button>
+                    <button type="submit" class="btn mt-20">حفض</button>
                 </form>
             </div>
         </div>
