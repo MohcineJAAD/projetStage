@@ -38,7 +38,7 @@ $result_payments = $stmt_payments->get_result();
 ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ar">
 
 <head>
     <meta charset="UTF-8">

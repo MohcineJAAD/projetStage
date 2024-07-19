@@ -98,9 +98,9 @@
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            if ($row['type'] == 'التأمين') {
+                            if ($row['type'] == 'assurance') {
                                 $annualPaid = true;
-                            } elseif ($row['type'] == 'الانخراط') {
+                            } elseif ($row['type'] == 'adhesion') {
                                 $adhesionPaid = true;
                             } else {
                                 $paymentMonth = date('n', strtotime($row['payment_date']));
@@ -155,8 +155,8 @@
                             </div>
                         </div>
                         <div class="action-buttons">
-                            <button type="button" class="modify-btn btn-shape mb-10"><i class="fas fa-edit"></i> Modifier</button>
-                            <button type="submit" class="save-btn btn-shape mb-10 hidden"><i class="fas fa-save"></i> Sauvegarder</button>
+                            <button type="button" class="modify-btn btn-shape mb-10"><i class="fas fa-edit"></i> تعديل</button>
+                            <button type="submit" class="save-btn btn-shape mb-10 hidden"><i class="fas fa-save"></i> حفض</button>
                         </div>
                     </form>
                 </div>

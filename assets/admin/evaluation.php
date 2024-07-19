@@ -38,18 +38,18 @@ session_start();
     </style>
 </head>
 
-<body>
+<body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
             <?php require 'header.php'; ?>
-            <h1 class="p-relative">Gestion des adhérents</h1>
+            <h1 class="p-relative">التقييم</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
-                <h2 class="mt-0 mb-20 mt-20">Les adhérents</h2>
+                <h2 class="mt-0 mb-20 mt-20">المشتركين</h2>
                 <div class="responsive-table">
                     <div class="options w-full">
                         <div class="branch-filter mt-10 mb-10">
-                            <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">Tous</button>
+                            <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">الكل</button>
                             <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="تايكواندو">تايكواندو</button>
                             <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="فول كونتاكت">فول كونتاكت</button>
                         </div>
@@ -57,12 +57,12 @@ session_start();
                     <table class="fs-15 w-full" id="adherent-list">
                         <thead>
                             <tr>
-                                <th>Nom complet</th>
-                                <th>Sport</th>
+                                <th>الاسم الكامل</th>
+                                <th>الرياضة</th>
                                 <th>Discipline</th>
                                 <th>Performances</th>
-                                <th>Comportement</th>
-                                <th>Actions</th>
+                                <th>السلوك</th>
+                                <th>الإجراء</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -124,7 +124,7 @@ session_start();
                                     echo "</td>";
 
                                     echo "<td><input type='hidden' name='identifier' value='" . htmlspecialchars($row1['identifier']) . "'>";
-                                    echo "<button type='submit' class='btn-shape bg-c-60 color-fff'>Enregistrer</button></td>";
+                                    echo "<button type='submit' class='btn-shape bg-c-60 color-fff'>حفض</button></td>";
                                     echo "</tr>";
                                     echo "</form>";
                                 }

@@ -14,7 +14,7 @@
     <title>Dashboard</title>
 </head>
 
-<body>
+<body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
@@ -31,7 +31,7 @@
             $pay = $conn->query("SELECT sum(amount) AS count FROM payments WHERE identifier != 'A000000001'");
             $row_pay = $pay->fetch_assoc();
             ?>
-            <h1 class="p-relative">Dashboard</h1>
+            <h1 class="p-relative">الرئيسية</h1>
             <div class="wrapper d-grid gap-20">
                 <div class="cards rad-10 txt-c-mobile block-mobile">
                     <div class="card-content">
