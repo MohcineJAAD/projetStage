@@ -26,12 +26,10 @@ session_start();
             height: 50px;
             display: table-cell;
         }
-
         table i {
             color: #203a85;
             font-size: 25px;
         }
-
         table i:hover {
             cursor: pointer;
         }
@@ -46,7 +44,7 @@ session_start();
             <h1 class="p-relative">التقييم</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
                 <h2 class="mt-0 mb-20 mt-20">المشتركين</h2>
-                <div class="responsive-table">
+                <div class="responsive-table special">
                     <div class="options w-full">
                         <div class="branch-filter mt-10 mb-10">
                             <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">الكل</button>
@@ -59,8 +57,8 @@ session_start();
                             <tr>
                                 <th>الاسم الكامل</th>
                                 <th>الرياضة</th>
-                                <th>Discipline</th>
-                                <th>Performances</th>
+                                <th>الانضباط</th>
+                                <th>الاداء الرياضي</th>
                                 <th>السلوك</th>
                                 <th>الإجراء</th>
                             </tr>
@@ -129,14 +127,14 @@ session_start();
                                     echo "</form>";
                                 }
                             } else {
-                                echo "<tr><td colspan='6' class='no-results'>Aucun adhérent trouvé</td></tr>";
+                                echo "<tr><td colspan='6' class='no-results'>لم يتم العثور على أعضاء</td></tr>";
                             }
 
                             $stmt1->close();
                             $conn->close();
                             ?>
                             <tr class='no-results' style="display:none;">
-                                <td colspan='6' class='no-results'>Aucun adhérent trouvé</td>
+                                <td colspan='6' class='no-results'>لم يتم العثور على أعضاء</td>
                             </tr>
                         </tbody>
                     </table>

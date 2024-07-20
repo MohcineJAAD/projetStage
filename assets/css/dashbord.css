@@ -456,23 +456,23 @@ ul {
     -ms-transition: .3s;
     -o-transition: .3s;
 }
-.absences tbody td:last-child,
+.special tbody td:last-child,
 .horaire tbody td:last-child {
     border-right: 1px solid #eee;
 }
-.absences tbody td:last-child {
+.special tbody td:last-child {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
-.absences tbody td:last-child a {
+.special tbody td:last-child a {
     color: var(--color-30);
 }
-.absences tbody td:last-child span:first-child {
+.special tbody td:last-child span:first-child {
     margin-bottom: 5px;
 }
-.absences tbody tr:hover td,
+.special tbody tr:hover td,
 .horaire tbody tr:hover td {
     background-color: #faf7f7;
 }
@@ -1003,4 +1003,12 @@ input[type="checkbox"]:hover {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+.no-results {
+    text-align: center;
+    font-weight: bold;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    width: 100%;
 }

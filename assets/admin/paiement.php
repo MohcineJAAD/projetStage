@@ -77,7 +77,7 @@ $result_payments = $stmt_payments->get_result();
                             <span class="toggle-icon">></span>
                         </div>
                         <div class="accordion-content">
-                            <form class="horaire responsive-table" method="get" action="">
+                            <form class="horaire responsive-table special" method="get" action="">
                                 <div class="row">
                                     <div class="input-field">
                                         <label for="datePaiemnt">تاريخ الدفع</label>
@@ -124,7 +124,7 @@ $result_payments = $stmt_payments->get_result();
                                 <span class="toggle-icon">></span>
                             </div>
                             <div class="accordion-content">
-                                <form class="horaire responsive-table">
+                                <form class="horaire responsive-table special">
                                     <table>
                                         <thead>
                                             <tr>

@@ -12,7 +12,7 @@ $sports = [
 ];
 
 // Define the days array
-$days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+$days = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
 
 // Initialize schedule array
 $schedule = [];
@@ -46,25 +46,25 @@ $conn->close();
     <title>Dashboard</title>
 </head>
 
-<body>
+<body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
         <div class="content w-full">
             <?php require 'header.php'; ?>
-            <h1 class="p-relative">L'emploi du temps</h1>
+            <h1 class="p-relative">إدارة الجدول الزمني</h1>
             <div class="accordion-container">
                 <div class="accordion-item m-20">
                     <div class="accordion-header">
-                        <span>emploi temp</span>
+                        <span>الجدول الزمني</span>
                         <span class="toggle-icon">></span>
                     </div>
                     <div class="accordion-content">
-                        <form class="horaire responsive-table" method="post" action="opHoraire.php">
+                        <form class="horaire responsive-table special" method="post" action="opHoraire.php">
                             <input type="hidden" name="class" value="">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Jour/Heure</th>
+                                        <th>اليوم/الوقت</th>
                                         <th>19:30-20:30</th>
                                         <th>20:30-21:30</th>
                                         <th>21:30-22:30</th>
@@ -98,9 +98,9 @@ $conn->close();
                                 </tbody>
                             </table>
                             <div class="action-buttons">
-                                <button type="button" class="edit-btn modify-btn btn-shape mb-10" ><i class="fas fa-edit"></i> Modifier</button>
-                                <button type="submit" class="save-btn btn-shape mb-10 hidden"><i class="fas fa-save"></i> Sauvegarder</button>
-                                <button type="submit" class="delete-btn btn-shape mb-10" name="delete" value="class_value_here"><i class="fas fa-trash"></i> Supprimer</button>
+                                <button type="button" class="edit-btn modify-btn btn-shape mb-10"><i class="fas fa-edit"></i> تعديل</button>
+                                <button type="submit" class="save-btn btn-shape mb-10 hidden"><i class="fas fa-save"></i> حفض</button>
+                                <button type="submit" class="delete-btn btn-shape mb-10" name="delete" value="class_value_here"><i class="fas fa-trash"></i> حذف</button>
                             </div>
                         </form>
                     </div>
@@ -182,7 +182,9 @@ $conn->close();
                 close: true,
                 gravity: "top",
                 position: "center",
-                backgroundColor: type === "error" ? "#FF3030" : "#2F8C37",
+                style: {
+                    background: type === "error" ? "#FF3030" : "#2F8C37",
+                },
                 stopOnFocus: true
             }).showToast();
         }

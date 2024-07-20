@@ -119,7 +119,7 @@
                     <?php endforeach; ?>
                 </select>
                 <div id="payment-info">
-                    <form class="horaire responsive-table" method="POST" action="../php/save_payments.php">
+                    <form class="horaire responsive-table special" method="POST" action="../php/save_payments.php">
                         <input type="hidden" name="adherent" value="<?php echo htmlspecialchars($identifier); ?>">
                         <input type="hidden" name="year" id="yearInput" value="<?php echo $year; ?>">
                         <div class="flex-table">

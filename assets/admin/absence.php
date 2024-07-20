@@ -83,9 +83,9 @@ unset($_SESSION['search_results']);
                 }
                 ?>
             </div>
-            <div class="absences p-20 bg-fff rad-10 m-20">
+            <div class="absences p-20 bg-fff rad-10 m-20 special">
                 <h2 class="mt-0 mb-20 mt-20">استمارة الغياب</h2>
-                <div class="responsive-table">
+                <div class="responsive-table ">
                     <div class="options w-full">
                         <div class="branch-filter mt-10 mb-10">
                             <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">الكل</button>

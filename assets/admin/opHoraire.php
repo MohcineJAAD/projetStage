@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare($query);
         $stmt->execute();
         $stmt->close();
-        $_SESSION['message'] = "Supprimer";
+        $_SESSION['message'] = "تم الحذف";
         $_SESSION['status'] = "successe";
     } else
     {
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
         }
-        $_SESSION['message'] = "Modifier";
+        $_SESSION['message'] = "تم التعديل";
         $_SESSION['status'] = "successe";
     }
 }

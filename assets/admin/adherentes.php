@@ -36,7 +36,7 @@ session_start();
         <div class="content w-full">
             <?php require 'header.php'; ?>
             <h1 class="p-relative">إدارة المنخرطين</h1>
-            <div class="absences p-20 bg-fff rad-10 m-20">
+            <div class="absences p-20 bg-fff rad-10 m-20 special">
                 <h2 class="mt-0 mb-20">التسجيلات جديدة</h2>
                 <?php
                 $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
@@ -92,7 +92,7 @@ session_start();
                         <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="فول كونتاكت">فول كونتاكت</button>
                     </div>
                 </div>
-                <div class="responsive-table">
+                <div class="responsive-table special">
                     <?php
                     $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
                     $status_active = 'active';
@@ -128,7 +128,7 @@ session_start();
                                 }
                             } else {
                                 echo "</tbody></table>";
-                                echo "<div class='no-results'>Aucun adhérent trouvé</div>";
+                                echo "<div class='no-results'>لم يتم العثور على أعضاء</div>";
                             }
                             $stmt1->close();
                             $conn->close();
