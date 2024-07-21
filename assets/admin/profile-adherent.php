@@ -1,3 +1,8 @@
+<?php
+session_start();
+$belts_tae = ["أبيض", "أصفر بخط أبيض", "أصفر", "برتقالي", "أخضر", "أزرق", "أزرق بخط أحمر", "أحمر", "أحمر بخط أسود", "أحمر بخطين أسودين"];
+$belts_full = ["أبيض", "أصفر", "برتقالي", "أخضر", "أزرق", "بني", "أسود"];
+?>
 <!DOCTYPE html>
 <html lang="ar">
 
@@ -24,7 +29,7 @@
             <?php require 'header.php'; ?>
 
             <h1 class="p-relative">الملف الشخصي</h1>
-            <div class="profile-container m-20 bg-fff rad-10" >
+            <div class="profile-container m-20 bg-fff rad-10">
                 <div class="profile-header">
                     <?php
                     $trophies = [];
@@ -128,13 +133,22 @@
                                 <div class="input-field">
                                     <label for="beltLevel">الحزام الحالي</label>
                                     <select id="beltLevel" name="beltLevel" disabled>
-                                        <option value="" disabled selected>اختر مستوى الحزام</option>
-                                        <option value="Blanche" <?php echo $current_belt == 'Blanche' ? 'selected' : ''; ?>>Blanche</option>
-                                        <option value="Jaune" <?php echo $current_belt == 'Jaune' ? 'selected' : ''; ?>>Jaune</option>
-                                        <option value="Verte" <?php echo $current_belt == 'Verte' ? 'selected' : ''; ?>>Verte</option>
-                                        <option value="Bleue" <?php echo $current_belt == 'Bleue' ? 'selected' : ''; ?>>Bleue</option>
-                                        <option value="Marron" <?php echo $current_belt == 'Marron' ? 'selected' : ''; ?>>Marron</option>
-                                        <option value="Noire" <?php echo $current_belt == 'Noire' ? 'selected' : ''; ?>>Noire</option>
+                                        <option value="null" disabled selected>اختر مستوى الحزام</option>
+                                        <?php
+                                        if ($type === 'تايكواندو') {
+                                            $beltsTae = ["أبيض", "أصفر بخط أبيض", "أصفر", "برتقالي", "أخضر", "أزرق", "أزرق بخط أحمر", "أحمر", "أحمر بخط أسود", "أحمر بخطين أسودين"];
+                                            foreach ($beltsTae as $belt) {
+                                                echo "<option value=\"$belt\" " . ($current_belt == $belt ? 'selected' : '') . ">$belt</option>";
+                                            }
+                                        } elseif ($type === 'فول كونتاكت') {
+                                            $beltsFull = ["أبيض", "أصفر", "برتقالي", "أخضر", "أزرق", "بني", "أسود"];
+                                            foreach ($beltsFull as $belt) {
+                                                echo "<option value=\"$belt\" " . ($current_belt == $belt ? 'selected' : '') . ">$belt</option>";
+                                            }
+                                        } elseif ($type === 'إيروبيك / رجال' || $type === 'إيروبيك / سيدات') {
+                                            echo "<script>document.getElementById('beltLevel').disabled = true;</script>";
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                             </div>
@@ -143,13 +157,23 @@
                                     <label for="nextBeltLevel">الحزام التالي</label>
                                     <select id="nextBeltLevel" name="nextBeltLevel" disabled>
                                         <option value="null" disabled selected>اختر مستوى الحزام</option>
-                                        <option value="Blanche" <?php echo $next_belt == 'Blanche' ? 'selected' : ''; ?>>Blanche</option>
-                                        <option value="Jaune" <?php echo $next_belt == 'Jaune' ? 'selected' : ''; ?>>Jaune</option>
-                                        <option value="Verte" <?php echo $next_belt == 'Verte' ? 'selected' : ''; ?>>Verte</option>
-                                        <option value="Bleue" <?php echo $next_belt == 'Bleue' ? 'selected' : ''; ?>>Bleue</option>
-                                        <option value="Marron" <?php echo $next_belt == 'Marron' ? 'selected' : ''; ?>>Marron</option>
-                                        <option value="Noire" <?php echo $next_belt == 'Noire' ? 'selected' : ''; ?>>Noire</option>
+                                        <?php
+                                        if ($type === 'تايكواندو') {
+                                            $beltsTae = ["أبيض", "أصفر بخط أبيض", "أصفر", "برتقالي", "أخضر", "أزرق", "أزرق بخط أحمر", "أحمر", "أحمر بخط أسود", "أحمر بخطين أسودين"];
+                                            foreach ($beltsTae as $belt) {
+                                                echo "<option value=\"$belt\" " . ($next_belt == $belt ? 'selected' : '') . ">$belt</option>";
+                                            }
+                                        } elseif ($type === 'فول كونتاكت') {
+                                            $beltsFull = ["أبيض", "أصفر", "برتقالي", "أخضر", "أزرق", "بني", "أسود"];
+                                            foreach ($beltsFull as $belt) {
+                                                echo "<option value=\"$belt\" " . ($next_belt == $belt ? 'selected' : '') . ">$belt</option>";
+                                            }
+                                        } elseif ($type === 'إيروبيك / رجال' || $type === 'إيروبيك / سيدات') {
+                                            echo "<script>document.getElementById('nextBeltLevel').disabled = true;</script>";
+                                        }
+                                        ?>
                                     </select>
+
                                 </div>
                                 <div class="input-field">
                                     <label for="weight">الوزن</label>
