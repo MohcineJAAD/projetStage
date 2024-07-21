@@ -40,11 +40,6 @@ session_start();
                 <h2 class="mt-0 mb-20 mt-20">المنخرطين</h2>
                 <form class="responsive-table" method="post" action="generate_excel.php">
                     <?php
-                    // Ensure the connection is successful
-                    if ($conn->connect_error) {
-                        die("Connection failed: " . $conn->connect_error);
-                    }
-
                     // Prepare and execute the query
                     $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
                     if ($stmt1 === false) {

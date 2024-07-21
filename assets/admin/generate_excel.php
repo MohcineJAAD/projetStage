@@ -31,6 +31,8 @@ if (isset($_POST['adherent'])) {
         mkdir($tempDir, 0777, true);
     }
 
+    $beltsTae = ["أبيض", "أصفر بخط أبيض", "أصفر", "برتقالي", "أخضر", "أزرق", "أزرق بخط أحمر", "أحمر", "أحمر بخط أسود", "أحمر بخطين أسودين"];
+
     foreach ($identifiers as $identifier) {
         // Fetch adherent details from the database
         $stmt = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
@@ -42,9 +44,14 @@ if (isset($_POST['adherent'])) {
 
         if ($adherent) {
             try {
-                // Load the .xlsx template
+                // Determine which template to use based on the adherent's current belt
+                $templateFile = in_array($adherent['current_belt'], array_slice($beltsTae, array_search("أخضر", $beltsTae))) ? 
+                                '../sheet/TestformExameGreen.xlsx' : 
+                                '../sheet/TestformExame.xlsx';
+
+                // Load the selected template
                 $reader = IOFactory::createReader('Xlsx');
-                $spreadsheet = $reader->load('../sheet/TestformExame.xlsx');
+                $spreadsheet = $reader->load($templateFile);
                 $sheet = $spreadsheet->getActiveSheet();
 
                 // Replace placeholders with adherent details
@@ -173,3 +180,4 @@ else
     exit();
 }
 $conn->close();
+?>
