@@ -67,7 +67,7 @@ $result_payments = $stmt_payments->get_result();
                     <div class="options w-full m-20">
                         <div class="branch-filter mt-10 mb-10">
                             <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_month.php'>لائحة الشهر</a></button>
-                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_adherence.php'>لائحة الاشتراك</a></button>
+                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_adhesion.php'>لائحة الاشتراك</a></button>
                             <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_assurance.php'>لائحة التأمين</a></button>
                         </div>
                     </div>
