@@ -40,33 +40,31 @@ session_start();
                 <h2 class="mt-0 mb-20 mt-20">المنخرطين</h2>
                 <form class="responsive-table" method="post" action="generate_excel.php">
                     <?php
-                    // Prepare and execute the query
                     $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
                     if ($stmt1 === false) {
                         die("Prepare failed: " . htmlspecialchars($conn->error));
                     }
-
                     $status_active = 'active';
                     $stmt1->bind_param("s", $status_active);
                     if (!$stmt1->execute()) {
                         die("Execute failed: " . htmlspecialchars($stmt1->error));
                     }
-
                     $result1 = $stmt1->get_result();
                     if ($result1 === false) {
                         die("Get result failed: " . htmlspecialchars($stmt1->error));
                     }
                     ?>
-                    <div class="action-buttons">
-                        <button type="submit" class="save-btn btn-shape mb-10"><i class="fa-solid fa-print"></i> طبع</button>
-                        <div class="row mb-10">
-                            <div class="input-field">
+                    <div class="row mb-10">
+                        <div class="branch-filter">
+                            <button type="submit" class="save-btn btn-shape mb-10"><i class="fa-solid fa-print"></i> طبع</button>
+                            <div class="mb-10">
                                 <label for="session"> الدورة</label>
                                 <select name="session" id="session">
                                     <option value="" selected disabled>اختر الدورة</option>
                                     <option value="يناير">يناير</option>
                                     <option value="يونيو">يونيو</option>
                                 </select>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -89,7 +87,7 @@ session_start();
                                     $identifiant = $row1['identifier'];
                                     echo "<td>
                                             <input type='checkbox' name='adherent[]' value='" . htmlspecialchars($identifiant) . "'>
-                                          </td>";
+                                        </td>";
                                     echo "<td>" . htmlspecialchars($row1['prenom'] . " " . $row1['nom']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row1['identifier']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row1['date_naissance']) . "</td>";
@@ -111,35 +109,35 @@ session_start();
         </div>
     </div>
     <script>
-    document.getElementById('select-all').onclick = function() {
-        var checkboxes = document.getElementsByName('adherent[]');
-        for (var checkbox of checkboxes) {
-            checkbox.checked = this.checked;
+        document.getElementById('select-all').onclick = function() {
+            var checkboxes = document.getElementsByName('adherent[]');
+            for (var checkbox of checkboxes)
+                checkbox.checked = this.checked;
         }
-    }
-    <?php
-    if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
-        $status_message = $_SESSION['message'];
-        $status_type = $_SESSION['status'];
-        echo "showToast('" . addslashes($status_message) . "', '" . addslashes($status_type) . "');";
-        unset($_SESSION['message']);
-        unset($_SESSION['status']);
-    }
-    ?>
-    function showToast(message, type) {
-        Toastify({
-            text: message,
-            duration: 3000,
-            close: true,
-            gravity: "top",
-            position: "center",
-            style: {
-                background: type === "error" ? "#FF3030" : "#2F8C37",
-            },
-            stopOnFocus: true
-        }).showToast();
-    }
-</script>
+        <?php
+        if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
+            $status_message = $_SESSION['message'];
+            $status_type = $_SESSION['status'];
+            echo "showToast('" . addslashes($status_message) . "', '" . addslashes($status_type) . "');";
+            unset($_SESSION['message']);
+            unset($_SESSION['status']);
+        }
+        ?>
+
+        function showToast(message, type) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                style: {
+                    background: type === "error" ? "#FF3030" : "#2F8C37",
+                },
+                stopOnFocus: true
+            }).showToast();
+        }
+    </script>
 </body>
 
 </html>

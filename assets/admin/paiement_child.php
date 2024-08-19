@@ -12,65 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <title>Dashboard</title>
-    <style>
-        .hidden {
-            display: none;
-        }
-
-        .flex-table {
-            display: flex;
-            flex-wrap: wrap;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .flex-row {
-            display: flex;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        .flex-cell {
-            flex: 1 1 33.33%;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid #ddd;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .flex-cell h4 {
-            margin: 10px 0 0;
-            font-weight: normal;
-        }
-
-        .paid {
-            background-color: #d4edda;
-        }
-
-        .action-buttons {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .action-buttons button {
-            margin: 0 10px;
-        }
-
-        @media (max-width: 768px) {
-            .flex-cell {
-                flex: 1 1 50%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .flex-cell {
-                flex: 1 1 100%;
-            }
-        }
-    </style>
 </head>
 
 <body dir="rtl">

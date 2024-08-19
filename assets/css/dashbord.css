@@ -220,6 +220,11 @@ ul {
     -o-border-radius: 0.5rem;
     height: 208.391px;
 }
+@media (max-width: 600px) {
+    .cards {
+        height: 220.391px;
+    }
+}
 .cards:hover {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
@@ -229,7 +234,7 @@ ul {
     align-items: center;
 }
 .cards h3 {
-    margin: 0;
+    margin: 5px 0 0 0;
     font-size: 18px;
     color: #333;
 }
@@ -238,6 +243,11 @@ ul {
     font-weight: bold;
     margin: 10px 0;
     color: #555;
+}
+@media (max-width: 600px) {
+    .value {
+        font-size: 16px; 
+    }
 }
 .card-content i {
     font-size: 32px;
@@ -319,9 +329,6 @@ ul {
 .form-personne input:focus {
     border-color: var(--color-60);
 }
-/* .form-personne input[type="checkbox"]:not(:first-of-type) {
-    margin-left: 10px;
-} */
 .modal,
 #info-modal {
     display: none;
@@ -379,9 +386,6 @@ ul {
     align-items: center;
     margin-bottom: 10px;
 }
-/* .modal-content .form-personne div input[type="checkbox"] {
-    margin-right: 10px;
-} */
 .action {
     display: flex;
     justify-content: space-between;
@@ -1011,4 +1015,50 @@ input[type="checkbox"]:hover {
     background-color: #f8f8f8;
     border: 1px solid #ddd;
     width: 100%;
+}
+/* paiment child */
+.flex-table {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0 auto;
+}
+.flex-row {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+.flex-cell {
+    flex: 1 1 33.33%;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.flex-cell h4 {
+    margin: 10px 0 0;
+    font-weight: normal;
+}
+.paid {
+    background-color: #d4edda;
+}
+.action-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+.action-buttons button {
+    margin: 0 10px;
+}
+@media (max-width: 768px) {
+    .flex-cell {
+        flex: 1 1 50%;
+    }
+}
+@media (max-width: 480px) {
+    .flex-cell {
+        flex: 1 1 100%;
+    }
 }
