@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : dim. 21 juil. 2024 à 12:41
+-- Généré le : mar. 20 août 2024 à 21:11
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -55,8 +55,8 @@ CREATE TABLE `adherents` (
 --
 
 INSERT INTO `adherents` (`identifier`, `nom`, `prenom`, `date_naissance`, `poids`, `type`, `date_adhesion`, `image_path`, `BC_path`, `guardian_name`, `guardian_phone`, `second_guardian_phone`, `address`, `health_status`, `blood_type`, `status`, `current_belt`, `next_belt`, `licence`, `note`) VALUES
-('A000000002', 'اكفاس', 'تفيق', '2004-01-24', 90.00, 'تايكواندو', '2024-07-04', 'mohcine.jpg', '6679c510176e2_avatar.png', 'houcine', '0612341234', '0612341234', 'hay errahma', NULL, 'O+', 'active', 'أصفر', 'برتقالي', '1234567890', ''),
-('A000000003', 'mochid', 'marwan', '2004-01-24', 0.00, 'تايكواندو', '2024-06-24', '20220714_082450.jpg', 'CNETofi9.pdf', 'houcine', '0612341234', '0612341234', 'hay errahma', NULL, 'O+', 'active', NULL, NULL, '1234567890', '');
+('A000000002', 'اكفاس', 'تفيق', '2004-01-24', 90.00, 'تايكواندو', '2024-07-04', 'mohcine.jpg', '6679c510176e2_avatar.png', 'houcine', '0612341234', '0612341234', 'hay errahma', NULL, 'O+', 'active', 'أخضر', 'أزرق', '1234567890', ''),
+('A000000003', 'mochid', 'marwan', '2004-01-24', 0.00, 'تايكواندو', '2024-06-24', '20220714_082450.jpg', 'CNETofi9.pdf', 'houcine', '0612341234', '0612341234', 'hay errahma', NULL, 'O+', 'active', 'أصفر بخط أبيض', 'أصفر', '1234567890', '');
 
 -- --------------------------------------------------------
 
@@ -69,15 +69,16 @@ CREATE TABLE `admin` (
   `identifier` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `full_name` varchar(255) DEFAULT NULL,
-  `club_name` varchar(255) DEFAULT NULL
+  `club_name` varchar(255) DEFAULT NULL,
+  `logo` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `admin`
 --
 
-INSERT INTO `admin` (`id`, `identifier`, `password`, `full_name`, `club_name`) VALUES
-(1, 'O642634894', 'Oiif1234', 'Oussama ait ben addou', 'الحسني');
+INSERT INTO `admin` (`id`, `identifier`, `password`, `full_name`, `club_name`, `logo`) VALUES
+(1, 'O642634894', 'Oiif1234', 'Oussama  ', 'الحسني', 'logo officiel ASS CLUB SPORTIF-1.png');
 
 -- --------------------------------------------------------
 
@@ -97,7 +98,8 @@ CREATE TABLE `attendance` (
 
 INSERT INTO `attendance` (`id`, `identifier`, `date`) VALUES
 (1, 'A000000002', '2024-07-04'),
-(2, 'A000000002', '2024-07-21');
+(2, 'A000000002', '2024-07-21'),
+(3, 'A000000002', '2024-08-08');
 
 -- --------------------------------------------------------
 
@@ -160,13 +162,36 @@ CREATE TABLE `payments` (
 --
 
 INSERT INTO `payments` (`id`, `identifier`, `payment_date`, `amount`, `type`, `Date`) VALUES
-(97, 'A000000002', '2024-01-01', 100.00, 'mois', '2024-07-20'),
-(98, 'A000000002', '2024-04-01', 100.00, 'mois', '2024-07-20'),
-(99, 'A000000002', '2024-05-01', 100.00, 'mois', '2024-07-20'),
-(100, 'A000000002', '2024-08-01', 100.00, 'mois', '2024-07-20'),
-(101, 'A000000002', '2024-11-01', 100.00, 'mois', '2024-07-20'),
-(102, 'A000000002', '2024-01-01', 200.00, 'assurance', '2024-07-20'),
-(103, 'A000000002', '2024-01-01', 150.00, 'adhesion', '2024-07-20');
+(130, 'A000000003', '2024-11-01', 100.00, 'mois', '2024-08-18'),
+(131, 'A000000003', '2024-01-01', 200.00, 'assurance', '2024-08-18'),
+(132, 'A000000002', '2024-01-01', 100.00, 'mois', '2024-08-18'),
+(133, 'A000000002', '2024-04-01', 100.00, 'mois', '2024-08-18'),
+(134, 'A000000002', '2024-05-01', 100.00, 'mois', '2024-08-18'),
+(135, 'A000000002', '2024-08-01', 100.00, 'mois', '2024-08-18'),
+(136, 'A000000002', '2024-12-01', 100.00, 'mois', '2024-08-18'),
+(137, 'A000000002', '2024-01-01', 200.00, 'assurance', '2024-08-18'),
+(138, 'A000000002', '2024-01-01', 150.00, 'adhesion', '2024-08-18');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `plans`
+--
+
+CREATE TABLE `plans` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `created_at` date NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `plans`
+--
+
+INSERT INTO `plans` (`id`, `name`, `price`, `created_at`) VALUES
+(1, 'تايكواندو', 155.00, '2024-08-18'),
+(5, 'فول كونتاكت', 140.00, '2024-08-20');
 
 -- --------------------------------------------------------
 
@@ -187,7 +212,8 @@ CREATE TABLE `schedule` (
 --
 
 INSERT INTO `schedule` (`id`, `day`, `timeslot`, `sport_type`, `arabic_name`) VALUES
-(25, 'الاثنين', '19:30:00-20:30:00', 'فول كونتاكت', 'الفول كنتاكت شبان و كبار');
+(26, 'الاثنين', '19:30:00-20:30:00', 'فول كونتاكت', 'الفول كنتاكت شبان و كبار'),
+(27, 'الثلاثاء', '19:30:00-20:30:00', 'فول كونتاكت', 'الفول كنتاكت شبان و كبار');
 
 -- --------------------------------------------------------
 
@@ -255,6 +281,12 @@ ALTER TABLE `payments`
   ADD KEY `payments_identifier` (`identifier`);
 
 --
+-- Index pour la table `plans`
+--
+ALTER TABLE `plans`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Index pour la table `schedule`
 --
 ALTER TABLE `schedule`
@@ -281,7 +313,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT pour la table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `ceinture`
@@ -299,13 +331,19 @@ ALTER TABLE `evaluations`
 -- AUTO_INCREMENT pour la table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
+
+--
+-- AUTO_INCREMENT pour la table `plans`
+--
+ALTER TABLE `plans`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `schedule`
 --
 ALTER TABLE `schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT pour la table `trophies`

@@ -1,5 +1,5 @@
 <?php
-    $current_page = basename($_SERVER['PHP_SELF']);
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <div class="sidebar bg-fff p-20 p-relative">
     <h3 class="p-relative txt-c mt-0">A.C.S.E</h3>
@@ -48,8 +48,14 @@
         </li>
         <li>
             <a href="plans.php" class="<?php echo $current_page == 'plans.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
-                <i class="fa-solid fa-credit-card ml-5"></i>
+                <i class="fa-solid fa-credit-card fa-fw ml-5"></i>
                 <span class="fs-14 ml-10">الخطط</span>
+            </a>
+        </li>
+        <li>
+            <a href="settings.php" class="<?php echo $current_page == 'settings.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">
+                <i class="fa-solid fa-gear fa-fw ml-5"></i>
+                <span class="fs-14 ml-10">الاعدادت</span>
             </a>
         </li>
     </ul>
