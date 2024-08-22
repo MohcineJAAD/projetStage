@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 require '../php/db_connection.php';
-$sql = "SELECT plans.id, plans.name, plans.price, COUNT(adherents.identifier) AS adherents_count 
+$sql = "SELECT plans.id, plans.name, plans.price, plans.description, COUNT(adherents.identifier) AS adherents_count 
         FROM plans 
         LEFT JOIN adherents ON adherents.type = plans.name
         GROUP BY plans.name";
@@ -52,7 +52,7 @@ if ($result->num_rows > 0)
                                     <p class="value">عدد المنخرطين: <?php echo htmlspecialchars($plan['adherents_count']); ?></p>
                                     <div class="action-buttons">
                                         <a href="../php/deletePlan.php?id=<?php echo htmlspecialchars($plan['id']); ?>" class="btn-shape bg-f00 p-10">حذف</a>
-                                        <a href="#" onclick="openEditModal('<?php echo $plan['id']; ?>', '<?php echo $plan['price']; ?>')" class="btn-shape bg-c-60 p-10">تعديل</a>
+                                        <a href="#" onclick="openEditModal('<?php echo htmlspecialchars($plan['id']); ?>', '<?php echo htmlspecialchars($plan['price']); ?>', '<?php echo htmlspecialchars($plan['description']); ?>')" class="btn-shape bg-c-60 p-10">تعديل</a>
                                     </div>
                                 </div>
                             </div>
@@ -78,6 +78,10 @@ if ($result->num_rows > 0)
                             <label for="planPrice">السعر</label>
                             <input type="number" id="planPrice" name="planPrice" placeholder="ادخل السعر" style="width: 100%;" required />
                         </div>
+                        <div class="input-field mt-5">
+                            <label for="description">الوصف</label>
+                            <textarea id="description" name="description" placeholder="ادخل وصف" style="width: 100%;"></textarea>
+                        </div>
                     </div>
                 </div>
                 <button type="submit" class="save-btn btn-shape mt-10">اضف</button>
@@ -96,6 +100,10 @@ if ($result->num_rows > 0)
                             <label for="editPlanPrice">السعر الجديد</label>
                             <input type="number" id="editPlanPrice" name="planPrice" placeholder="ادخل السعر الجديد" style="width: 100%;" required />
                         </div>
+                        <div class="input-field mt-5">
+                            <label for="editDescription">الوصف</label>
+                            <textarea id="editDescription" name="description" placeholder="ادخل وصف" style="width: 100%;"></textarea>
+                        </div>
                     </div>
                 </div>
                 <button type="submit" class="save-btn btn-shape mt-10">تحديث</button>
@@ -105,19 +113,15 @@ if ($result->num_rows > 0)
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // For Add Card Modal
             const addModal = document.getElementById('addCardModal');
             const addCardButton = document.querySelector('.add-card');
             const addCloseButton = addModal.querySelector('.close');
-
             addCardButton.addEventListener('click', () => {
                 addModal.style.display = 'flex';
             });
-
             addCloseButton.addEventListener('click', () => {
                 addModal.style.display = 'none';
             });
-
             window.addEventListener('click', (event) => {
                 if (event.target === addModal) {
                     addModal.style.display = 'none';
@@ -125,11 +129,9 @@ if ($result->num_rows > 0)
             });
             const editModal = document.getElementById('editCardModal');
             const editCloseButton = editModal.querySelector('.close');
-
             editCloseButton.addEventListener('click', () => {
                 editModal.style.display = 'none';
             });
-
             window.addEventListener('click', (event) => {
                 if (event.target === editModal) {
                     editModal.style.display = 'none';
@@ -137,17 +139,17 @@ if ($result->num_rows > 0)
             });
         });
 
-        function openEditModal(planId, planPrice) {
+        function openEditModal(planId, planPrice, description) {
             const editModal = document.getElementById('editCardModal');
             document.getElementById('planId').value = planId;
             document.getElementById('editPlanPrice').value = planPrice;
+            document.getElementById('editDescription').value = description;
             editModal.style.display = 'flex';
         }
     </script>
 </body>
 
 </html>
-
 <?php
 $conn->close();
 ?>

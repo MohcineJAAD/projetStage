@@ -22,16 +22,16 @@
             <div class="illustration">
                 <img src="assets/images/login.png" alt="Illustration">
             </div>
-            <div class="form-container">
+            <div class="form-container" dir="rtl">
                 <form action="assets/php/authentication.php" method="post" class="login">
-                    <h2 class="title">Se connecter</h2>
+                    <h2 class="title">تسجيل الدخول</h2>
                     <div class="input-filde">
                         <i class="fa-regular fa-circle-user"></i>
-                        <input type="text" name="userName" id="user" placeholder="Entrez identifiant" autocomplete="off">
+                        <input type="text" name="userName" id="user" placeholder="أدخل اسم المستخدم" autocomplete="off">
                     </div>
                     <div class="input-filde">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="password" id="pass" placeholder="Entrez mot de passe" autocomplete="off">
+                        <input type="password" name="password" id="pass" placeholder="أدخل كلمة المرور" autocomplete="off">
                         <img src="assets/images/hide.png" alt="password show" id="eye">
                     </div>
                     <input type="submit" value="Se connecter" class="btn">

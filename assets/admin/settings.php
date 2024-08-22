@@ -38,6 +38,12 @@ session_start();
                         $row = $result->fetch_assoc();
                         $full_name = $row['full_name'];
                         $club_name = $row['club_name'];
+                        $email = $row['email'];
+                        $phone = $row['phone'];
+                        $addr = $row['address'];
+                        $fac = $row['facebook'];
+                        $insta = $row['instagram'];
+                        $x = $row['twitter'];
                         $pass = $row['password'];
                         $iden = $row['identifier'];
                         $logo = "../images/" . $row['logo'];
@@ -66,12 +72,42 @@ session_start();
                             </div>
                             <div class="row">
                                 <div class="input-field">
+                                    <label for="email">البريد الألكتروني</label>
+                                    <input type="email" id="email" name="email" placeholder="ادخل البريد الألكتروني" value="<?php echo htmlspecialchars($email); ?>" disabled>
+                                </div>
+                                <div class="input-field">
+                                    <label for="phone">الهاتف</label>
+                                    <input type="text" id="phone" name="phone" placeholder="ادخل الهاتف" value="<?php echo htmlspecialchars($phone); ?>" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field">
                                     <label for="identifier">المعرف</label>
                                     <input type="text" id="identifier" name="identifier" placeholder="ادخل المعرف" value="<?php echo htmlspecialchars($iden); ?>" disabled>
                                 </div>
                                 <div class="input-field">
                                     <label for="password">الرمز السري</label>
                                     <input type="text" id="password" name="password" placeholder="ادخل الرمز السري" value="<?php echo htmlspecialchars($pass); ?>" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field">
+                                    <label for="addresse">العنوان</label>
+                                    <input type="text" id="addresse" name="addresse" placeholder="ادخل العنوان" value="<?php echo htmlspecialchars($addr); ?>" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field">
+                                    <label for="facebook"><i class="fa-brands fa-square-facebook"></i></label>
+                                    <input type="text" id="facebook" name="facebook" placeholder="ادخل الرابط" value="<?php echo htmlspecialchars($fac); ?>" disabled>
+                                </div>
+                                <div class="input-field">
+                                    <label for="instagram"><i class="fa-brands fa-square-instagram"></i></label>
+                                    <input type="text" id="instagram" name="instagram" placeholder="ادخل الرابط" value="<?php echo htmlspecialchars($insta); ?>" disabled>
+                                </div>
+                                <div class="input-field">
+                                    <label for="twitter"><i class="fa-brands fa-square-x-twitter"></i></label>
+                                    <input type="text" id="twitter" name="twitter" placeholder="ادخل الرابط" value="<?php echo htmlspecialchars($x); ?>" disabled>
                                 </div>
                             </div>
                         </div>

@@ -1,7 +1,5 @@
 <?php
 require '../php/db_connection.php';
-
-// Define the sports array with adherent types and Arabic translations
 $sports = [
     ["type" => "فول كونتاكت", "arabic" => "الفول كنتاكت شبان و كبار"],
     ["type" => "تايكواندو", "arabic" => "التايكوندو كتاكيت و صغار"],
@@ -10,22 +8,13 @@ $sports = [
     ["type" => "aerobics for women", "arabic" => "اللياقة البدنية نساء"],
     ["type" => "aerobics for men", "arabic" => "اللياقة البدنية رجال"]
 ];
-
-// Define the days array
 $days = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
-
-// Initialize schedule array
 $schedule = [];
-
-// Fetch current schedule
 $sql = "SELECT * FROM schedule";
 $result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+if ($result->num_rows > 0)
+    while ($row = $result->fetch_assoc())
         $schedule[$row['day']][$row['timeslot']] = $row['sport_type'];
-    }
-}
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -110,7 +99,6 @@ $conn->close();
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Accordion functionality
             const accordionItems = document.querySelectorAll('.accordion-item');
             accordionItems.forEach(item => {
                 const header = item.querySelector('.accordion-header');
@@ -119,12 +107,10 @@ $conn->close();
 
                 header.addEventListener('click', function() {
                     const isOpen = content.classList.contains('open');
-                    // Close all accordions
                     accordionItems.forEach(acc => {
                         acc.querySelector('.accordion-content').classList.remove('open');
                         acc.querySelector('.toggle-icon').classList.remove('rotate');
                     });
-                    // Toggle current accordion
                     if (!isOpen) {
                         content.classList.add('open');
                         icon.classList.add('rotate');
@@ -135,14 +121,12 @@ $conn->close();
                 });
             });
 
-            // Edit and Save functionality
             document.querySelectorAll('.accordion-content form').forEach(form => {
                 const editBtn = form.querySelector('.edit-btn');
                 const saveBtn = form.querySelector('.save-btn');
                 const deleteBtn = form.querySelector('.delete-btn');
                 const selectElements = form.querySelectorAll('select');
 
-                // Initially hide the save button
                 saveBtn.classList.add('hidden');
 
                 editBtn.addEventListener('click', function() {
@@ -150,18 +134,18 @@ $conn->close();
                         select.disabled = false;
                         select.classList.add('editable');
                     });
-                    editBtn.style.display = 'none'; // Hide the edit button
-                    deleteBtn.style.display = 'none'; // Hide the delete button
-                    saveBtn.style.display = 'inline-block'; // Show the save button
+                    editBtn.style.display = 'none';
+                    deleteBtn.style.display = 'none';
+                    saveBtn.style.display = 'inline-block';
                 });
 
                 deleteBtn.addEventListener('click', function(event) {
                     selectElements.forEach(select => {
                         select.value = '--';
                     });
-                    saveBtn.classList.remove('hidden'); // Show save button to confirm deletion
-                    editBtn.style.display = 'none'; // Hide edit button
-                    deleteBtn.style.display = 'none'; // Hide delete button
+                    saveBtn.classList.remove('hidden');
+                    editBtn.style.display = 'none';
+                    deleteBtn.style.display = 'none';
                 });
             });
         });
