@@ -1,7 +1,10 @@
 <?php
 require "../php/db_connection.php";
 session_start();
-function getPlans($conn) {
+
+// Function to get all plans
+function getPlans($conn)
+{
     $stmt = $conn->prepare("SELECT name FROM plans");
     $stmt->execute();
     $result = $stmt->get_result();
@@ -9,42 +12,50 @@ function getPlans($conn) {
     $stmt->close();
     return $plans;
 }
-$status = 'active';
 
-$plans = getPlans($conn);
-$types = array_column($plans, 'name');
-$results = [];
-foreach ($types as $type) {
+// Function to get adherents based on status and type
+function getAdherents($conn, $status, $type)
+{
     $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
     $stmt->bind_param("ss", $status, $type);
     $stmt->execute();
-    $results[$type] = $stmt->get_result();
+    $result = $stmt->get_result();
+    $stmt->close();
+    return $result;
 }
 
-$filter_id = $_GET['id'] ?? '';
-$filter_date = $_GET['datePaiemnt'] ?? '';
-
-$payments_query = "SELECT * FROM payments JOIN adherents ON payments.identifier = adherents.identifier WHERE 1";
-if ($filter_id) {
-    $payments_query .= " AND identifier = ?";
-}
-if ($filter_date) {
-    $payments_query .= " AND payment_date = ?";
-}
-
-$stmt_payments = $conn->prepare($payments_query);
-if ($filter_id && $filter_date) {
-    $stmt_payments->bind_param("ss", $filter_id, $filter_date);
-} elseif ($filter_id) {
-    $stmt_payments->bind_param("s", $filter_id);
-} elseif ($filter_date) {
+// Function to get filtered payments
+function getFilteredPayments($conn, $filter_date)
+{
+    $payments_query = "SELECT payments.*, nom, prenom FROM payments JOIN adherents ON payments.identifier = adherents.identifier WHERE payments.Date = ?";
+    $stmt_payments = $conn->prepare($payments_query);
     $stmt_payments->bind_param("s", $filter_date);
+    $stmt_payments->execute();
+    $result_payments = $stmt_payments->get_result();
+    $stmt_payments->close();
+    return $result_payments;
 }
-$stmt_payments->execute();
-$result_payments = $stmt_payments->get_result();
+
+$status = 'active';
+$plans = getPlans($conn);
+$types = array_column($plans, 'name');
+$results = [];
+
+// Fetch adherents for each plan type
+foreach ($types as $type) {
+    $results[$type] = getAdherents($conn, $status, $type);
+}
+
+// Get current date or the user-selected date
+$current_date = date('Y-m-d');
+$filter_date = $_POST['datePaiemnt'] ?? $current_date;
+
+$result_payments = getFilteredPayments($conn, $filter_date);
+
 ?>
 <!DOCTYPE html>
 <html lang="ar">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,6 +71,7 @@ $result_payments = $stmt_payments->get_result();
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <title>Dashboard</title>
 </head>
+
 <body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
@@ -67,60 +79,56 @@ $result_payments = $stmt_payments->get_result();
             <?php require 'header.php'; ?>
             <h1 class="p-relative">إدارة الدفع</h1>
             <div class="absences p-20 bg-fff rad-10 m-20">
+                <div class="options w-full m-20">
+                    <div class="branch-filter mt-10 mb-10">
+                        <button class="btn-shape bg-c-60 color-fff mb-10"><a href='generate_excel_month.php'>لائحة الشهر</a></button>
+                        <button class="btn-shape bg-c-60 color-fff mb-10"><a href='generate_excel_adhesion.php'>لائحة الاشتراك</a></button>
+                        <button class="btn-shape bg-c-60 color-fff mb-10"><a href='generate_excel_assurance.php'>لائحة التأمين</a></button>
+                    </div>
+                </div>
+                <h2 class="mt-0 mb-20">بحث متقدم</h2>
+                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <div class="section mb-20">
+                        <div class="row">
+                            <div class="input-field">
+                                <label for="datePaiemnt">تاريخ الدفع :</label>
+                                <input type="date" id="datePaiemnt" name="datePaiemnt" value="<?= htmlspecialchars($filter_date) ?>" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-20">بحث</button>
+                    </div>
+                </form>
+                <div class="responsive-table">
+                    <?php if ($result_payments->num_rows > 0) : ?>
+                        <table class="fs-15 w-full">
+                            <thead>
+                                <tr>
+                                    <th>الاسم الكامل</th>
+                                    <th>المعرف</th>
+                                    <th>نوع الدفع</th>
+                                    <th>المبلغ</th>
+                                    <th>تاريخ الدفع</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($row = $result_payments->fetch_assoc()) : ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
+                                        <td><?= htmlspecialchars($row['identifier']) ?></td>
+                                        <td><?= htmlspecialchars($row['type']) ?></td>
+                                        <td><?= htmlspecialchars($row['amount']) ?></td>
+                                        <td><?= htmlspecialchars($row['Date']) ?></td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    <?php else : ?>
+                        <p style="text-align: center;">لا توجد نتائج مطابقة</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="absences p-20 bg-fff rad-10 m-20">
                 <div class="accordion-container">
-                    <div class="options w-full m-20">
-                        <div class="branch-filter mt-10 mb-10">
-                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_month.php'>لائحة الشهر</a></button>
-                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_adhesion.php'>لائحة الاشتراك</a></button>
-                            <button class="btn-shape bg-c-60 color-fff active mb-10"><a href='generate_excel_assurance.php'>لائحة التأمين</a></button>
-                        </div>
-                    </div>
-                    <div class="accordion-item m-20">
-                        <div class="accordion-header">
-                            <span>السجل</span>
-                            <span class="toggle-icon">></span>
-                        </div>
-                        <div class="accordion-content">
-                            <form class="horaire responsive-table special" method="get" action="">
-                                <div class="row">
-                                    <div class="input-field">
-                                        <label for="datePaiemnt">تاريخ الدفع</label>
-                                        <input type="date" id="datePaiemnt" name="datePaiemnt" value="<?= htmlspecialchars($filter_date) ?>">
-                                    </div>
-                                    <div class="input-field">
-                                        <label for="id">المنخرط</label>
-                                        <input type="text" id="id" name="id" placeholder="ادخل المعرف" value="<?= htmlspecialchars($filter_id) ?>">
-                                    </div>
-                                    <div class="input-field">
-                                        <button type="submit" class="btn-shape bg-c-60 color-fff">بحث</button>
-                                    </div>
-                                </div>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>الاسم الكامل</th>
-                                            <th>المعرف</th>
-                                            <th>نوع الدفع</th>
-                                            <th>المبلغ</th>
-                                            <th>تاريخ الدفع</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php while ($row = $result_payments->fetch_assoc()) : ?>
-                                            <tr>
-                                                <td><?= htmlspecialchars($row['nom']." ".$row['nom']) ?></td>
-                                                <td><?= htmlspecialchars($row['identifier']) ?></td>
-                                                <td><?= htmlspecialchars($row['type']) ?></td>
-                                                <td><?= htmlspecialchars($row['amount']) ?></td>
-                                                <td><?= htmlspecialchars($row['payment_date']) ?></td>
-                                            </tr>
-                                        <?php endwhile; ?>
-                                    </tbody>
-                                </table>
-                            </form>
-                        </div>
-                    </div>
-
                     <?php foreach ($types as $type) : ?>
                         <div class="accordion-item m-20">
                             <div class="accordion-header">
@@ -146,7 +154,7 @@ $result_payments = $stmt_payments->get_result();
                                                     <td><?= htmlspecialchars($row['identifier']) ?></td>
                                                     <td><?= htmlspecialchars($row['type']) ?></td>
                                                     <td><?= htmlspecialchars($row['date_adhesion']) ?></td>
-                                                    <td><a href='paiement_child.php?id=<?= $row['identifier'] ?>&date=<?= date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>دفع</span></a></td>
+                                                    <td><a href='paiement_child.php?id=<?= htmlspecialchars($row['identifier']) ?>&date=<?= date("Y") ?>'><span class='label btn-shape bg-c-60 color-fff'>دفع</span></a></td>
                                                 </tr>
                                             <?php endwhile; ?>
                                         </tbody>
@@ -159,7 +167,6 @@ $result_payments = $stmt_payments->get_result();
             </div>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const accordionItems = document.querySelectorAll('.accordion-item');
@@ -207,4 +214,5 @@ $result_payments = $stmt_payments->get_result();
         }
     </script>
 </body>
+
 </html>

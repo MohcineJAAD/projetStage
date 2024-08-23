@@ -2,7 +2,8 @@
 require "db_connection.php";
 session_start();
 
-function generateUniqueIdentifier($conn) {
+function generateUniqueIdentifier($conn)
+{
     $query = "SELECT identifier FROM adherents ORDER BY identifier DESC LIMIT 1";
     $result = $conn->query($query);
     $lastIdentifier = $result->fetch_assoc()['identifier'] ?? null;
@@ -10,7 +11,8 @@ function generateUniqueIdentifier($conn) {
     return $lastIdentifier ? incrementIdentifier($lastIdentifier) : 'A000000001';
 }
 
-function incrementIdentifier($identifier) {
+function incrementIdentifier($identifier)
+{
     $alphaPart = substr($identifier, 0, 1);
     $numPart = substr($identifier, 1);
     $incrementedNumPart = str_pad((int)$numPart + 1, 9, '0', STR_PAD_LEFT);
@@ -23,7 +25,8 @@ function incrementIdentifier($identifier) {
     return $alphaPart . $incrementedNumPart;
 }
 
-function handleFileUpload($file, &$fileName) {
+function handleFileUpload($file, &$fileName)
+{
     $allowedTypes = ['image/jpeg', 'image/png'];
     $uploadDir = '../uploads/';
 
@@ -85,8 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
     $bloodType = !empty($_POST['bloodType']) ? trim($_POST['bloodType']) : null;
     $membershipDate = date('Y-m-d');
 
-    if (empty($prenom) || empty($nom) || empty($birthDate) || empty($address) || empty($guardianName) || empty($guardianPhone) || empty($sport) || empty($beltLevel) || empty($weight) || empty($healthStatus)) {
-        $_SESSION['message'] = "Veuillez remplir tous les champs obligatoires.";
+    if (empty($prenom) || empty($nom) || empty($birthDate) || empty($address) || empty($sport) || empty($weight) || empty($healthStatus)) {
+        $_SESSION['message'] = "الرجاء ملء جميع الحقول الإلزامية (*)";
         $_SESSION['status'] = "error";
         header("Location: ../../sign_up.php");
         exit();
@@ -99,9 +102,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
     }
 
     $sql = "INSERT INTO adherents (identifier, nom, prenom, date_naissance, poids, type, date_adhesion, image_path, guardian_name, guardian_phone, address, blood_type, health_status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssdsssssss", $identifier, $nom, $prenom, $birthDate, $weight, $sport, $membershipDate, $fileName, $guardianName, $guardianPhone, $address, $bloodType, $healthStatus);
+    $stmt->bind_param("sssssssssssss", $identifier, $nom, $prenom, $birthDate, $weight, $sport, $membershipDate, $fileName, $guardianName, $guardianPhone, $address, $bloodType, $healthStatus);
+
 
     if ($stmt->execute()) {
         $_SESSION['message'] = $identifier;
@@ -118,4 +122,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
 }
 
 $conn->close();
-?>

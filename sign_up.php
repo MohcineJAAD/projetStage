@@ -35,27 +35,27 @@ session_start();
                         </div>
                         <div class="row">
                             <div class="input-field">
-                                <label for="prenom">الاسم الأول</label>
+                                <label for="prenom">الاسم الأول<span style="color: #f00;">(*)</span></label>
                                 <input type="text" id="prenom" name="prenom" placeholder="أدخل اسمك الأول">
                             </div>
                             <div class="input-field">
-                                <label for="nom">اسم العائلة</label>
+                                <label for="nom">اسم العائلة<span style="color: #f00;">(*)</span></label>
                                 <input type="text" id="nom" name="nom" placeholder="أدخل اسمك الأخير">
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field">
-                                <label for="birthDate">تاريخ الازدياد</label>
+                                <label for="birthDate">تاريخ الازدياد<span style="color: #f00;">(*)</span></label>
                                 <input type="date" id="birthDate" name="birthDate">
                             </div>
                             <div class="input-field">
-                                <label for="address">العنوان</label>
+                                <label for="address">العنوان<span style="color: #f00;">(*)</span></label>
                                 <input type="text" id="address" name="address" placeholder="أدخل عنوانك">
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field">
-                                <label for="healthStatus">الحالة الصحية</label>
+                                <label for="healthStatus">الحالة الصحية<span style="color: #f00;">(*)</span></label>
                                 <select id="healthStatus" name="healthStatus">
                                     <option value="" disabled selected>اختر الحالة الصحية</option>
                                     <option value="سليم">سليم</option>
@@ -86,11 +86,11 @@ session_start();
                         </div>
                         <div class="row">
                             <div class="input-field">
-                                <label for="weight">الوزن</label>
+                                <label for="weight">الوزن<span style="color: #f00;">(*)</span></label>
                                 <input type="number" id="weight" name="weight" placeholder="أدخل الوزن" step="1" min="0" pattern="^\d*(\.\d{0,2})?$">
                             </div>
                             <div class="input-field">
-                                <label for="sport">الرياضة</label>
+                                <label for="sport">الرياضة<span style="color: #f00;">(*)</span></label>
                                 <select id="sport" name="sport">
                                     <option value="" disabled selected>اختر الرياضة</option>
                                     <option value="تايكواندو">تايكواندو</option>
