@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 20 août 2024 à 21:11
+-- Généré le : ven. 23 août 2024 à 17:47
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -70,15 +70,21 @@ CREATE TABLE `admin` (
   `password` varchar(255) NOT NULL,
   `full_name` varchar(255) DEFAULT NULL,
   `club_name` varchar(255) DEFAULT NULL,
-  `logo` varchar(100) DEFAULT NULL
+  `logo` varchar(100) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `phone` varchar(50) DEFAULT NULL,
+  `address` varchar(150) DEFAULT NULL,
+  `facebook` varchar(150) DEFAULT NULL,
+  `instagram` varchar(150) DEFAULT NULL,
+  `twitter` varchar(150) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `admin`
 --
 
-INSERT INTO `admin` (`id`, `identifier`, `password`, `full_name`, `club_name`, `logo`) VALUES
-(1, 'O642634894', 'Oiif1234', 'Oussama  ', 'الحسني', 'logo officiel ASS CLUB SPORTIF-1.png');
+INSERT INTO `admin` (`id`, `identifier`, `password`, `full_name`, `club_name`, `logo`, `email`, `phone`, `address`, `facebook`, `instagram`, `twitter`) VALUES
+(1, 'O642634894', 'Oiif1234', 'Oussama  ', 'الحسني', 'logo officiel ASS CLUB SPORTIF-1.png', '', '', '123 شارع حي الحسني، الداخلة، المغرب', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -99,7 +105,11 @@ CREATE TABLE `attendance` (
 INSERT INTO `attendance` (`id`, `identifier`, `date`) VALUES
 (1, 'A000000002', '2024-07-04'),
 (2, 'A000000002', '2024-07-21'),
-(3, 'A000000002', '2024-08-08');
+(3, 'A000000002', '2024-08-08'),
+(4, 'A000000002', '2024-08-23'),
+(5, 'A000000002', '2024-08-23'),
+(6, 'A000000002', '2024-08-23'),
+(7, 'A000000003', '2024-08-23');
 
 -- --------------------------------------------------------
 
@@ -140,7 +150,9 @@ CREATE TABLE `evaluations` (
 --
 
 INSERT INTO `evaluations` (`id`, `identifier`, `month`, `year`, `discipline`, `performance`, `behavior`) VALUES
-(2, 'A000000002', 7, 2024, 3, 0, 4);
+(2, 'A000000002', 7, 2024, 3, 0, 4),
+(3, 'A000000003', 8, 2024, 3, 3, 2),
+(5, 'A000000002', 8, 2024, 3, 1, 4);
 
 -- --------------------------------------------------------
 
@@ -182,16 +194,22 @@ CREATE TABLE `plans` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `created_at` date NOT NULL DEFAULT current_timestamp()
+  `created_at` date NOT NULL DEFAULT current_timestamp(),
+  `description` varchar(500) DEFAULT NULL,
+  `assurance` decimal(10,2) DEFAULT NULL,
+  `adherence` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `plans`
 --
 
-INSERT INTO `plans` (`id`, `name`, `price`, `created_at`) VALUES
-(1, 'تايكواندو', 155.00, '2024-08-18'),
-(5, 'فول كونتاكت', 140.00, '2024-08-20');
+INSERT INTO `plans` (`id`, `name`, `price`, `created_at`, `description`, `assurance`, `adherence`) VALUES
+(1, 'تايكواندو', 155.00, '2024-08-18', 'خطتنا لتايكوندو تقدم تدريبًا شاملاً في الفنون القتالية. مناسبة لجميع مستويات المهارة، من المبتدئين إلى الممارسين المتقدمين.', 55.00, 150.00),
+(5, 'فول كونتاكت', 150.00, '2024-08-20', 'خطتنا لتايكوندو تقدم تدريبًا شاملاً في الفنون القتالية. مناسبة لجميع مستويات المهارة، من المبتدئين إلى الممارسين المتقدمين.', 50.00, 100.00),
+(7, 'إيروبيك / رجال', 120.00, '2024-08-22', 'انضم إلى دورات الإيروبيك لدينا لتحسين لياقتك القلبية الوعائية وصحتك العامة. جلسات ممتعة ونشيطة لجميع مستويات اللياقة البدنية.', 50.00, 100.00),
+(8, 'إيروبيك / سيدات', 123.00, '2024-08-22', 'انضمّي إلى دورات الإيروبيك لدينا لتحسين لياقتك القلبية الوعائية وصحتك العامة. جلسات ممتعة ونشيطة لجميع مستويات اللياقة البدنية.', NULL, NULL),
+(12, 'temp', 134.00, '2024-08-23', 'jkhh', 24.00, 1234.00);
 
 -- --------------------------------------------------------
 
@@ -203,17 +221,18 @@ CREATE TABLE `schedule` (
   `id` int(11) NOT NULL,
   `day` varchar(10) NOT NULL,
   `timeslot` varchar(20) NOT NULL,
-  `sport_type` varchar(50) NOT NULL,
-  `arabic_name` varchar(100) NOT NULL
+  `sport_type` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `schedule`
 --
 
-INSERT INTO `schedule` (`id`, `day`, `timeslot`, `sport_type`, `arabic_name`) VALUES
-(26, 'الاثنين', '19:30:00-20:30:00', 'فول كونتاكت', 'الفول كنتاكت شبان و كبار'),
-(27, 'الثلاثاء', '19:30:00-20:30:00', 'فول كونتاكت', 'الفول كنتاكت شبان و كبار');
+INSERT INTO `schedule` (`id`, `day`, `timeslot`, `sport_type`) VALUES
+(50, 'الاثنين', '16:30:00-17:30:00', 'إيروبيك / سيدات'),
+(51, 'الاثنين', '19:30:00-20:30:00', 'فول كونتاكت'),
+(52, 'الثلاثاء', '16:30:00-17:30:00', 'إيروبيك / سيدات'),
+(53, 'الخميس', '18:30:00-19:30:00', 'إيروبيك / رجال');
 
 -- --------------------------------------------------------
 
@@ -313,7 +332,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT pour la table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT pour la table `ceinture`
@@ -325,7 +344,7 @@ ALTER TABLE `ceinture`
 -- AUTO_INCREMENT pour la table `evaluations`
 --
 ALTER TABLE `evaluations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `payments`
@@ -337,13 +356,13 @@ ALTER TABLE `payments`
 -- AUTO_INCREMENT pour la table `plans`
 --
 ALTER TABLE `plans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT pour la table `schedule`
 --
 ALTER TABLE `schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT pour la table `trophies`

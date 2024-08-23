@@ -14,22 +14,16 @@ session_start();
     <link rel="stylesheet" href="../css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <title>Dashboard</title>
     <style>
-        .no-results {
-            text-align: center;
-            font-weight: bold;
-            vertical-align: middle;
-            height: 50px;
-            display: table-cell;
-        }
         table i {
             color: #203a85;
             font-size: 25px;
         }
+
         table i:hover {
             cursor: pointer;
         }
@@ -47,9 +41,20 @@ session_start();
                 <div class="responsive-table special">
                     <div class="options w-full">
                         <div class="branch-filter mt-10 mb-10">
-                            <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">الكل</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="تايكواندو">تايكواندو</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="فول كونتاكت">فول كونتاكت</button>
+                            <?php
+                            // Fetch all available plans
+                            $plansQuery = "SELECT DISTINCT name FROM plans";
+                            $plansResult = $conn->query($plansQuery);
+
+                            if ($plansResult->num_rows > 0) {
+                                echo "<button class='btn-shape bg-c-60 color-fff active mb-10' data-branch='all'>الكل</button>";
+                                while ($plan = $plansResult->fetch_assoc()) {
+                                    echo "<button class='btn-shape bg-c-60 color-fff mb-10' data-branch='" . htmlspecialchars($plan['name']) . "'>" . htmlspecialchars($plan['name']) . "</button>";
+                                }
+                            } else {
+                                echo "<p>No plans found.</p>";
+                            }
+                            ?>
                         </div>
                     </div>
                     <table class="fs-15 w-full" id="adherent-list">
@@ -65,14 +70,16 @@ session_start();
                         </thead>
                         <tbody>
                             <?php
-                            $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
+                            $stmt1 = $conn->prepare("
+                                SELECT adherents.*, plans.name 
+                                FROM adherents 
+                                LEFT JOIN plans ON adherents.type = plans.name 
+                                WHERE adherents.status = ?
+                            ");
                             $status_active = 'active';
                             $stmt1->bind_param("s", $status_active);
                             $stmt1->execute();
                             $result1 = $stmt1->get_result();
-
-                            $currentMonth = date('m');
-                            $currentYear = date('Y');
 
                             if ($result1->num_rows > 0) {
                                 while ($rows1 = $result1->fetch_assoc()) {
@@ -82,8 +89,8 @@ session_start();
                                     $res1 = $stmt2->get_result();
                                     $row1 = $res1->fetch_assoc();
 
-                                    $stmt3 = $conn->prepare("SELECT * FROM evaluations WHERE identifier = ? AND month = ? AND year = ?");
-                                    $stmt3->bind_param("sii", $rows1['identifier'], $currentMonth, $currentYear);
+                                    $stmt3 = $conn->prepare("SELECT * FROM evaluations WHERE identifier = ? ORDER BY year DESC, month DESC LIMIT 1");
+                                    $stmt3->bind_param("s", $rows1['identifier']);
                                     $stmt3->execute();
                                     $res2 = $stmt3->get_result();
                                     $evaluation = $res2->fetch_assoc();
@@ -93,7 +100,7 @@ session_start();
                                     $behavior = $evaluation['behavior'] ?? 0;
 
                                     echo "<form action='../php/save_evaluation.php' method='post'>";
-                                    echo "<tr data-branch='" . htmlspecialchars($row1['type']) . "'>";
+                                    echo "<tr data-branch='" . htmlspecialchars($rows1['name']) . "'>";
                                     echo "<td>" . htmlspecialchars($row1['prenom'] . " " . $row1['nom']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row1['type']) . "</td>";
 
@@ -126,17 +133,12 @@ session_start();
                                     echo "</tr>";
                                     echo "</form>";
                                 }
-                            } else {
-                                echo "<tr><td colspan='6' class='no-results'>لم يتم العثور على أعضاء</td></tr>";
                             }
-
                             $stmt1->close();
                             $conn->close();
                             ?>
-                            <tr class='no-results' style="display:none;">
-                                <td colspan='6' class='no-results'>لم يتم العثور على أعضاء</td>
-                            </tr>
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -145,58 +147,51 @@ session_start();
 </body>
 
 <script>
-    const branchButtons = document.querySelectorAll(".branch-filter button");
-    branchButtons.forEach(button => {
-        button.addEventListener("click", function() {
-            branchButtons.forEach(btn => btn.classList.remove("active"));
-            button.classList.add("active");
-
-            const branch = button.getAttribute("data-branch");
-            const rows = document.querySelectorAll("#adherent-list tbody tr");
-            let hasVisibleRow = false;
-
-            rows.forEach(row => {
-                if (row.classList.contains('no-results')) return;
-
-                if (branch === "all" || row.getAttribute("data-branch") === branch) {
-                    row.style.display = "";
-                    hasVisibleRow = true;
-                } else {
-                    row.style.display = "none";
-                }
-            });
-
-            const noResultsRow = document.querySelector("#adherent-list tbody .no-results");
-            if (hasVisibleRow) {
-                noResultsRow.style.display = "none";
-            } else {
-                noResultsRow.style.display = "";
-            }
-        });
-    });
-
     document.addEventListener("DOMContentLoaded", function() {
-        const noResultsRow = document.querySelector("#adherent-list tbody .no-results");
+        const branchButtons = document.querySelectorAll(".branch-filter button");
         const rows = document.querySelectorAll("#adherent-list tbody tr");
-        let hasVisibleRow = false;
+        const noResultsRow = document.querySelector("#adherent-list tbody .no-results");
 
-        rows.forEach(row => {
-            if (row.style.display !== "none" && !row.classList.contains('no-results')) {
-                hasVisibleRow = true;
-            }
+        branchButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                // Remove the 'active' class from all buttons and add it to the clicked button
+                branchButtons.forEach(btn => btn.classList.remove("active"));
+                button.classList.add("active");
+
+                const branch = button.getAttribute("data-branch");
+                let hasVisibleRow = false;
+
+                // Loop through all rows and filter based on the selected branch
+                rows.forEach(row => {
+                    const rowBranch = row.getAttribute("data-branch");
+
+                    if (rowBranch === null) return; // Skip rows without the data-branch attribute
+
+                    if (branch === "all" || rowBranch === branch) {
+                        row.style.display = "";
+                        hasVisibleRow = true;
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+                // Show or hide the "no results" row
+                noResultsRow.style.display = hasVisibleRow ? "none" : "";
+            });
         });
 
-        if (!hasVisibleRow) {
-            noResultsRow.style.display = "";
-        }
+        // Initial check to see if any rows are visible
+        let hasVisibleRow = Array.from(rows).some(row => row.style.display !== "none" && !row.classList.contains('no-results'));
+        noResultsRow.style.display = hasVisibleRow ? "none" : "";
 
-        // Add event listener to toggle star icon and update hidden input values
+        // Star rating interaction functionality
         const tds = document.querySelectorAll("#adherent-list tbody td");
         tds.forEach(td => {
             const stars = td.querySelectorAll(".fa-star");
             const hiddenInput = td.querySelector("input[type='hidden']");
             stars.forEach((star, index) => {
                 star.addEventListener("click", function() {
+                    // Change the star classes based on the clicked star's index
                     stars.forEach((s, i) => {
                         if (i <= index) {
                             s.classList.remove("fa-regular");
@@ -206,36 +201,9 @@ session_start();
                             s.classList.add("fa-regular");
                         }
                     });
-                    hiddenInput.value = index + 1; // Update hidden input value
+                    hiddenInput.value = index + 1;
                 });
             });
         });
     });
 </script>
-
-<script>
-    <?php
-    if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
-        $status_message = $_SESSION['message'];
-        $status_type = $_SESSION['status'];
-        // Ensure proper quoting and escaping in the JavaScript string
-        echo "showToast('" . addslashes($status_message) . "', '" . addslashes($status_type) . "');";
-        unset($_SESSION['message']);
-        unset($_SESSION['status']);
-    }
-    ?>
-
-    function showToast(message, type) {
-        Toastify({
-            text: message,
-            duration: 3000,
-            close: true,
-            gravity: "top",
-            position: "center",
-            backgroundColor: type === "error" ? "#FF3030" : "#2F8C37",
-            stopOnFocus: true
-        }).showToast();
-    }
-</script>
-
-</html>

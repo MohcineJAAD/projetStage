@@ -9,20 +9,24 @@ if (isset($_SESSION['message'])) {
 }
 
 require 'assets/php/db_connection.php';
-$sql = "SELECT plans.name, plans.price, plans.description 
-        FROM plans";
+
+$sql = "SELECT * FROM plans";
 $result = $conn->query($sql);
 $plans = [];
-if ($result->num_rows > 0)
+if ($result->num_rows > 0) {
     $plans = $result->fetch_all(MYSQLI_ASSOC);
+}
 
-$sql = "SELECT day, timeslot, sport_type, arabic_name FROM schedule ORDER BY FIELD(day, 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'), timeslot";
+// Fetch schedule
+$sql = "SELECT day, timeslot, sport_type FROM schedule ORDER BY FIELD(day, 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'), timeslot";
 $result = $conn->query($sql);
 
 $schedule = [];
-if ($result->num_rows > 0)
-    while ($row = $result->fetch_assoc())
-        $schedule[$row['day']][$row['timeslot']] = $row['arabic_name'];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $schedule[$row['day']][$row['timeslot']] = $row['sport_type'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -81,16 +85,22 @@ if ($result->num_rows > 0)
                 <thead>
                     <tr>
                         <th>اليوم/الوقت</th>
-                        <th>19:30 - 20:30</th>
-                        <th>20:30 - 21:30</th>
-                        <th>21:30 - 22:30</th>
-                        <th>22:30 - 23:30</th>
+                        <th>16:30-17:30</th>
+                        <th>17:30-18:30</th>
+                        <th>18:30-19:30</th>
+                        <th>19:30-20:30</th>
+                        <th>20:30-21:30</th>
+                        <th>21:30-22:30</th>
+                        <th>22:30-23:30</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     $days = ['الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'];
                     $timeslots = [
+                        "16:30:00-17:30:00",
+                        "17:30:00-18:30:00",
+                        "18:30:00-19:30:00",
                         "19:30:00-20:30:00",
                         "20:30:00-21:30:00",
                         "21:30:00-22:30:00",

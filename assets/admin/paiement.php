@@ -1,11 +1,18 @@
 <?php
 require "../php/db_connection.php";
 session_start();
-
+function getPlans($conn) {
+    $stmt = $conn->prepare("SELECT name FROM plans");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $plans = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    return $plans;
+}
 $status = 'active';
 
-// Prepare statements for each type of adherent
-$types = ['فول كونتاكت', 'تايكواندو', 'إيروبيك / رجال', 'إيروبيك / سيدات'];
+$plans = getPlans($conn);
+$types = array_column($plans, 'name');
 $results = [];
 foreach ($types as $type) {
     $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = ? AND type = ?");
@@ -17,7 +24,7 @@ foreach ($types as $type) {
 $filter_id = $_GET['id'] ?? '';
 $filter_date = $_GET['datePaiemnt'] ?? '';
 
-$payments_query = "SELECT * FROM payments join adherents on payments.identifier = adherents.identifier WHERE 1";
+$payments_query = "SELECT * FROM payments JOIN adherents ON payments.identifier = adherents.identifier WHERE 1";
 if ($filter_id) {
     $payments_query .= " AND identifier = ?";
 }
@@ -36,10 +43,8 @@ if ($filter_id && $filter_date) {
 $stmt_payments->execute();
 $result_payments = $stmt_payments->get_result();
 ?>
-
 <!DOCTYPE html>
 <html lang="ar">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,7 +60,6 @@ $result_payments = $stmt_payments->get_result();
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <title>Dashboard</title>
 </head>
-
 <body dir="rtl">
     <div class="page d-flex">
         <?php require 'sidebar.php'; ?>
@@ -203,5 +207,4 @@ $result_payments = $stmt_payments->get_result();
         }
     </script>
 </body>
-
 </html>

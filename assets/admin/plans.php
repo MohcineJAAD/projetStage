@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 require '../php/db_connection.php';
-$sql = "SELECT plans.id, plans.name, plans.price, plans.description, COUNT(adherents.identifier) AS adherents_count 
+$sql = "SELECT plans.*, COUNT(adherents.identifier) AS adherents_count 
         FROM plans 
         LEFT JOIN adherents ON adherents.type = plans.name
         GROUP BY plans.name";
@@ -51,8 +51,8 @@ if ($result->num_rows > 0)
                                     <p class="value">السعر: <?php echo htmlspecialchars($plan['price']); ?> د.م</p>
                                     <p class="value">عدد المنخرطين: <?php echo htmlspecialchars($plan['adherents_count']); ?></p>
                                     <div class="action-buttons">
-                                        <a href="../php/deletePlan.php?id=<?php echo htmlspecialchars($plan['id']); ?>" class="btn-shape bg-f00 p-10">حذف</a>
-                                        <a href="#" onclick="openEditModal('<?php echo htmlspecialchars($plan['id']); ?>', '<?php echo htmlspecialchars($plan['price']); ?>', '<?php echo htmlspecialchars($plan['description']); ?>')" class="btn-shape bg-c-60 p-10">تعديل</a>
+                                        <a href="#" onclick="confirmDelete('<?php echo htmlspecialchars($plan['id']); ?>')" class="btn-shape bg-f00 p-10">حذف</a>
+                                        <a href="#" onclick="openEditModal('<?php echo htmlspecialchars($plan['id']); ?>', '<?php echo htmlspecialchars($plan['price']); ?>', '<?php echo htmlspecialchars($plan['description']); ?>', '<?php echo htmlspecialchars($plan['assurance']); ?>', '<?php echo htmlspecialchars($plan['adherence']); ?>')" class="btn-shape bg-c-60 p-10">تعديل</a>
                                     </div>
                                 </div>
                             </div>
@@ -75,8 +75,16 @@ if ($result->num_rows > 0)
                             <input type="text" id="planName" name="planName" placeholder="ادخل اسم الخطة" style="width: 100%;" required />
                         </div>
                         <div class="input-field mt-5">
-                            <label for="planPrice">السعر</label>
+                            <label for="planPrice">الواجب الشهري</label>
                             <input type="number" id="planPrice" name="planPrice" placeholder="ادخل السعر" style="width: 100%;" required />
+                        </div>
+                        <div class="input-field mt-5">
+                            <label for="adherence">الأنخراط</label>
+                            <input type="number" id="adherence" name="adherence" placeholder="ادخل السعر" style="width: 100%;" required />
+                        </div>
+                        <div class="input-field mt-5">
+                            <label for="assurance">التأمين</label>
+                            <input type="number" id="assurance" name="assurance" placeholder="ادخل السعر" style="width: 100%;" required />
                         </div>
                         <div class="input-field mt-5">
                             <label for="description">الوصف</label>
@@ -97,8 +105,16 @@ if ($result->num_rows > 0)
                 <div class="section">
                     <div class="row">
                         <div class="input-field">
-                            <label for="editPlanPrice">السعر الجديد</label>
+                            <label for="editPlanPrice">الواجب الشهري</label>
                             <input type="number" id="editPlanPrice" name="planPrice" placeholder="ادخل السعر الجديد" style="width: 100%;" required />
+                        </div>
+                        <div class="input-field mt-5">
+                            <label for="adherence">الأنخراط</label>
+                            <input type="number" id="editAdherence" name="adherence" placeholder="ادخل السعر" style="width: 100%;" required />
+                        </div>
+                        <div class="input-field mt-5">
+                            <label for="editAssurance">التأمين</label>
+                            <input type="number" id="editAssurance" name="assurance" placeholder="ادخل السعر" style="width: 100%;" required />
                         </div>
                         <div class="input-field mt-5">
                             <label for="editDescription">الوصف</label>
@@ -108,6 +124,17 @@ if ($result->num_rows > 0)
                 </div>
                 <button type="submit" class="save-btn btn-shape mt-10">تحديث</button>
             </form>
+        </div>
+    </div>
+    <div id="deleteConfirmationModal" class="modal" dir="rtl">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>تأكيد الحذف</h2>
+            <p>هل أنت متأكد أنك تريد حذف هذه الخطة؟</p>
+            <div class="action-buttons">
+                <button id="confirmDeleteButton" class="btn-shape color-fff bg-f00 p-10">حذف</button>
+                <button id="cancelDeleteButton" class="btn-shape color-fff bg-c-60 p-10">إلغاء</button>
+            </div>
         </div>
     </div>
 
@@ -137,15 +164,42 @@ if ($result->num_rows > 0)
                     editModal.style.display = 'none';
                 }
             });
+            window.openEditModal = (planId, planPrice, description, assurance, adherence) => {
+                document.getElementById('planId').value = planId;
+                document.getElementById('editPlanPrice').value = planPrice;
+                document.getElementById('editDescription').value = description;
+                document.getElementById('editAdherence').value = adherence;
+                document.getElementById('editAssurance').value = assurance;
+                editModal.style.display = 'flex';
+            };
+            const deleteModal = document.getElementById('deleteConfirmationModal');
+            const deleteCloseButton = deleteModal.querySelector('.close');
+            const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+            let deletePlanId = null;
+            deleteCloseButton.addEventListener('click', () => {
+                deleteModal.style.display = 'none';
+                deletePlanId = null;
+            });
+            document.getElementById('cancelDeleteButton').addEventListener('click', () => {
+                deleteModal.style.display = 'none';
+                deletePlanId = null;
+            });
+            window.addEventListener('click', (event) => {
+                if (event.target === deleteModal) {
+                    deleteModal.style.display = 'none';
+                    deletePlanId = null;
+                }
+            });
+            confirmDeleteButton.addEventListener('click', () => {
+                if (deletePlanId) {
+                    window.location.href = `../php/deletePlan.php?id=${deletePlanId}`;
+                }
+            });
+            window.confirmDelete = (planId) => {
+                deletePlanId = planId;
+                deleteModal.style.display = 'flex';
+            };
         });
-
-        function openEditModal(planId, planPrice, description) {
-            const editModal = document.getElementById('editCardModal');
-            document.getElementById('planId').value = planId;
-            document.getElementById('editPlanPrice').value = planPrice;
-            document.getElementById('editDescription').value = description;
-            editModal.style.display = 'flex';
-        }
     </script>
 </body>
 

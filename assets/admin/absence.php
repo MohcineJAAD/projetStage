@@ -2,9 +2,7 @@
 require "../php/db_connection.php";
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $identifier = trim($_POST['identifier']);
-
+function searchAttendance($conn, $identifier) {
     $stmt = $conn->prepare("SELECT date, prenom, nom FROM attendance 
     JOIN adherents ON attendance.identifier = adherents.identifier
     WHERE attendance.identifier = ?");
@@ -12,25 +10,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    $searchResults = [];
     if ($result->num_rows > 0) {
-        $_SESSION['search_results'] = [];
         while ($row = $result->fetch_assoc()) {
-            if (!isset($_SESSION['search_results']['name'])) {
-                $_SESSION['search_results']['name'] = $row['prenom'] . " " . $row['nom'];
+            if (!isset($searchResults['name'])) {
+                $searchResults['name'] = $row['prenom'] . " " . $row['nom'];
             }
-            $_SESSION['search_results']['dates'][] = $row['date'];
+            $searchResults['dates'][] = $row['date'];
         }
     } else {
-        $_SESSION['search_results'] = ['error' => 'Aucune absence trouvée pour cet identifiant.'];
+        $searchResults['error'] = 'Aucune absence trouvée pour cet identifiant.';
     }
 
     $stmt->close();
+    return $searchResults;
+}
+
+function getActiveAdherents($conn) {
+    $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = 'active'");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $adherents = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    return $adherents;
+}
+
+function getPlans($conn) {
+    $stmt = $conn->prepare("SELECT name FROM plans");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $plans = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    return $plans;
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $identifier = trim($_POST['identifier']);
+    $_SESSION['search_results'] = searchAttendance($conn, $identifier);
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 
 $searchResults = isset($_SESSION['search_results']) ? $_SESSION['search_results'] : null;
 unset($_SESSION['search_results']);
+
+$activeAdherents = getActiveAdherents($conn);
+$plans = getPlans($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,9 +73,6 @@ unset($_SESSION['search_results']);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <title>Dashboard</title>
-    <style>
-        /* Add custom CSS styles as needed */
-    </style>
 </head>
 
 <body dir="rtl">
@@ -89,8 +111,11 @@ unset($_SESSION['search_results']);
                     <div class="options w-full">
                         <div class="branch-filter mt-10 mb-10">
                             <button class="btn-shape bg-c-60 color-fff active mb-10" data-branch="all">الكل</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="تايكواندو">تايكواندو</button>
-                            <button class="btn-shape bg-c-60 color-fff mb-10" data-branch="فول كونتاكت">فول كونتاكت</button>
+                            <?php
+                            foreach ($plans as $plan) {
+                                echo "<button class='btn-shape bg-c-60 color-fff mb-10' data-branch='" . htmlspecialchars($plan['name']) . "'>" . htmlspecialchars($plan['name']) . "</button>";
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -145,7 +170,6 @@ unset($_SESSION['search_results']);
         </div>
     </div>
 
-    <!-- JavaScript scripts -->
     <script>
         const branchButtons = document.querySelectorAll(".branch-filter button");
         branchButtons.forEach(button => {
@@ -199,7 +223,6 @@ unset($_SESSION['search_results']);
         if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
             $status_message = $_SESSION['message'];
             $status_type = $_SESSION['status'];
-            // Ensure proper quoting and escaping in the JavaScript string
             echo "showToast('" . addslashes($status_message) . "', '" . addslashes($status_type) . "');";
             unset($_SESSION['message']);
             unset($_SESSION['status']);

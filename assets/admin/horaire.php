@@ -1,22 +1,30 @@
 <?php
 require '../php/db_connection.php';
-$sports = [
-    ["type" => "فول كونتاكت", "arabic" => "الفول كنتاكت شبان و كبار"],
-    ["type" => "تايكواندو", "arabic" => "التايكوندو كتاكيت و صغار"],
-    ["type" => "تايكواندو", "arabic" => "التايكوندو فتيان و فتيات"],
-    ["type" => "تايكواندو", "arabic" => "التايكوندو شبان و كبار"],
-    ["type" => "aerobics for women", "arabic" => "اللياقة البدنية نساء"],
-    ["type" => "aerobics for men", "arabic" => "اللياقة البدنية رجال"]
-];
+
+$sql = "SELECT name FROM plans";
+$result = $conn->query($sql);
+
+$sports = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $sports[] = ["type" => $row['name']];
+    }
+}
+
 $days = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
 $schedule = [];
+
 $sql = "SELECT * FROM schedule";
 $result = $conn->query($sql);
-if ($result->num_rows > 0)
-    while ($row = $result->fetch_assoc())
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
         $schedule[$row['day']][$row['timeslot']] = $row['sport_type'];
+    }
+}
+
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -54,6 +62,9 @@ $conn->close();
                                 <thead>
                                     <tr>
                                         <th>اليوم/الوقت</th>
+                                        <th>16:30-17:30</th>
+                                        <th>17:30-18:30</th>
+                                        <th>18:30-19:30</th>
                                         <th>19:30-20:30</th>
                                         <th>20:30-21:30</th>
                                         <th>21:30-22:30</th>
@@ -66,6 +77,9 @@ $conn->close();
                                             <th><?= $day ?></th>
                                             <?php
                                             $timeSlots = [
+                                                "16:30:00-17:30:00",
+                                                "17:30:00-18:30:00",
+                                                "18:30:00-19:30:00",
                                                 "19:30:00-20:30:00",
                                                 "20:30:00-21:30:00",
                                                 "21:30:00-22:30:00",
@@ -77,7 +91,7 @@ $conn->close();
                                                     <select name="sport[<?= $day ?>][<?= $time ?>]" class="sport" disabled>
                                                         <option>--</option>
                                                         <?php foreach ($sports as $sport) : ?>
-                                                            <option value="<?= $sport['type'] ?>" <?= isset($schedule[$day][$time]) && $schedule[$day][$time] == $sport['type'] ? 'selected' : '' ?>><?= $sport['arabic'] ?></option>
+                                                            <option value="<?= $sport['type'] ?>" <?= isset($schedule[$day][$time]) && $schedule[$day][$time] == $sport['type'] ? 'selected' : '' ?>><?= $sport['type'] ?></option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </td>
@@ -149,6 +163,7 @@ $conn->close();
                 });
             });
         });
+
         <?php
         if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
             $status_message = $_SESSION['message'];
