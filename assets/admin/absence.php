@@ -2,7 +2,8 @@
 require "../php/db_connection.php";
 session_start();
 
-function searchAttendance($conn, $identifier) {
+function searchAttendance($conn, $identifier)
+{
     $stmt = $conn->prepare("SELECT date, prenom, nom FROM attendance 
     JOIN adherents ON attendance.identifier = adherents.identifier
     WHERE attendance.identifier = ?");
@@ -26,7 +27,8 @@ function searchAttendance($conn, $identifier) {
     return $searchResults;
 }
 
-function getActiveAdherents($conn) {
+function getActiveAdherents($conn)
+{
     $stmt = $conn->prepare("SELECT * FROM adherents WHERE status = 'active'");
     $stmt->execute();
     $result = $stmt->get_result();
@@ -35,7 +37,8 @@ function getActiveAdherents($conn) {
     return $adherents;
 }
 
-function getPlans($conn) {
+function getPlans($conn)
+{
     $stmt = $conn->prepare("SELECT name FROM plans");
     $stmt->execute();
     $result = $stmt->get_result();
@@ -119,53 +122,55 @@ $plans = getPlans($conn);
                         </div>
                     </div>
                 </div>
-                <form id="absence-form" method="post" action="../php/save_absences.php">
-                    <table class="fs-15 w-full" id="adherent-list">
-                        <thead>
-                            <tr>
-                                <th>الاسم الكامل</th>
-                                <th>المعرف</th>
-                                <th>الرياضة</th>
-                                <th>الغياب</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
-                            $status_active = 'active';
-                            $stmt1->bind_param("s", $status_active);
-                            $stmt1->execute();
-                            $result1 = $stmt1->get_result();
+                <div class="responsive-table ">
+                    <form id="absence-form" method="post" action="../php/save_absences.php">
+                        <table class="fs-15 w-full" id="adherent-list">
+                            <thead>
+                                <tr>
+                                    <th>الاسم الكامل</th>
+                                    <th>المعرف</th>
+                                    <th>الرياضة</th>
+                                    <th>الغياب</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $stmt1 = $conn->prepare("SELECT * FROM adherents WHERE status = ?");
+                                $status_active = 'active';
+                                $stmt1->bind_param("s", $status_active);
+                                $stmt1->execute();
+                                $result1 = $stmt1->get_result();
 
-                            if ($result1->num_rows > 0) {
-                                while ($rows1 = $result1->fetch_assoc()) {
-                                    $stmt2 = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
-                                    $stmt2->bind_param("s", $rows1['identifier']);
-                                    $stmt2->execute();
-                                    $res1 = $stmt2->get_result();
-                                    $row1 = $res1->fetch_assoc();
-                                    echo "<tr data-branch='" . htmlspecialchars($row1['type']) . "'>";
-                                    echo "<td>" . htmlspecialchars($row1['prenom'] . " " . $row1['nom']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($rows1['identifier']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row1['type']) . "</td>";
-                                    $identifiant = $rows1['identifier'];
-                                    echo "<td>
+                                if ($result1->num_rows > 0) {
+                                    while ($rows1 = $result1->fetch_assoc()) {
+                                        $stmt2 = $conn->prepare("SELECT * FROM adherents WHERE identifier = ?");
+                                        $stmt2->bind_param("s", $rows1['identifier']);
+                                        $stmt2->execute();
+                                        $res1 = $stmt2->get_result();
+                                        $row1 = $res1->fetch_assoc();
+                                        echo "<tr data-branch='" . htmlspecialchars($row1['type']) . "'>";
+                                        echo "<td>" . htmlspecialchars($row1['prenom'] . " " . $row1['nom']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($rows1['identifier']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row1['type']) . "</td>";
+                                        $identifiant = $rows1['identifier'];
+                                        echo "<td>
                                             <input type='checkbox' name='absente[]' value='$identifiant' class='absence-checkbox'>
                                         </td>";
-                                    echo "</tr>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "</tbody></table>";
+                                    echo "<div class='no-results'>Aucune adhérent trouvée</div>";
                                 }
-                            } else {
-                                echo "</tbody></table>";
-                                echo "<div class='no-results'>Aucune adhérent trouvée</div>";
-                            }
 
-                            $stmt1->close();
-                            ?>
-                        </tbody>
-                    </table>
+                                $stmt1->close();
+                                ?>
+                            </tbody>
+                        </table>
 
-                    <button type="submit" class="btn mt-20">حفض</button>
-                </form>
+                        <button type="submit" class="btn mt-20">حفض</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -157,63 +157,71 @@ $plans = getPlans($conn);
 </body>
 
 <script>
-        // Close the delete confirmation modal
-        deleteCloseButton.addEventListener('click', () => {
+    // Variables to store elements and selected adherent ID
+    const deleteModal = document.getElementById('deleteConfirmationModal');
+    const deleteCloseButton = document.querySelector('.close');
+    const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+    const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+    let deleteAdherentID = null;
+
+    // Show the delete confirmation modal
+    window.confirmDelete = (adherentID) => {
+        deleteAdherentID = adherentID;
+        deleteModal.style.display = 'flex';
+    };
+
+    // Close the delete confirmation modal
+    deleteCloseButton.addEventListener('click', () => {
+        deleteModal.style.display = 'none';
+        deleteAdherentID = null;
+    });
+
+    // Cancel deletion and close the modal
+    cancelDeleteButton.addEventListener('click', () => {
+        deleteModal.style.display = 'none';
+        deleteAdherentID = null;
+    });
+
+    // Close the modal if clicked outside
+    window.addEventListener('click', (event) => {
+        if (event.target === deleteModal) {
             deleteModal.style.display = 'none';
             deleteAdherentID = null;
-        });
-
-        // Cancel deletion and close the modal
-        document.getElementById('cancelDeleteButton').addEventListener('click', () => {
-            deleteModal.style.display = 'none';
-            deleteAdherentID = null;
-        });
-
-        // Close the modal if clicked outside
-        window.addEventListener('click', (event) => {
-            if (event.target === deleteModal) {
-                deleteModal.style.display = 'none';
-                deleteAdherentID = null;
-            }
-        });
-
-        // Confirm deletion
-        confirmDeleteButton.addEventListener('click', () => {
-            if (deleteAdherentID) {
-                window.location.href = `../php/delete_adherent.php?id=${deleteAdherentID}`;
-            }
-        });
-
-        // Show confirmation modal for deletion
-        window.confirmDelete = (adherentID) => {
-            deleteAdherentID = adherentID;
-            deleteModal.style.display = 'flex';
-        };
-    </script>
-
-    <script>
-        // Show toast notification based on session message
-        <?php
-        if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
-            $status_message = $_SESSION['message'];
-            $status_type = $_SESSION['status'];
-            echo "showToast('" . addslashes($status_message) . "', '" . addslashes($status_type) . "');";
-            unset($_SESSION['message']);
-            unset($_SESSION['status']);
         }
-        ?>
+    });
 
-        function showToast(message, type) {
-            Toastify({
-                text: message,
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "center",
-                backgroundColor: type === "error" ? "#FF3030" : "#2F8C37",
-                stopOnFocus: true
-            }).showToast();
+    // Confirm deletion
+    confirmDeleteButton.addEventListener('click', () => {
+        if (deleteAdherentID) {
+            window.location.href = `../php/delete_adherent.php?id=${deleteAdherentID}`;
         }
-    </script>
+    });
+</script>
+
+
+<script>
+    // Show toast notification based on session message
+    <?php
+    if (isset($_SESSION['message']) && isset($_SESSION['status'])) {
+        $status_message = $_SESSION['message'];
+        $status_type = $_SESSION['status'];
+        echo "showToast('" . addslashes($status_message) . "', '" . addslashes($status_type) . "');";
+        unset($_SESSION['message']);
+        unset($_SESSION['status']);
+    }
+    ?>
+
+    function showToast(message, type) {
+        Toastify({
+            text: message,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "center",
+            backgroundColor: type === "error" ? "#FF3030" : "#2F8C37",
+            stopOnFocus: true
+        }).showToast();
+    }
+</script>
 
 </html>

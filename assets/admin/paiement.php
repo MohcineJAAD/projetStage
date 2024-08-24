@@ -111,15 +111,24 @@ $result_payments = getFilteredPayments($conn, $filter_date);
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($row = $result_payments->fetch_assoc()) : ?>
+                                <?php
+                                $totalAmount = 0;
+
+                                while ($row = $result_payments->fetch_assoc()) :
+                                    $totalAmount += $row['amount'];
+                                ?>
                                     <tr>
                                         <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
                                         <td><?= htmlspecialchars($row['identifier']) ?></td>
                                         <td><?= htmlspecialchars($row['type']) ?></td>
-                                        <td><?= htmlspecialchars($row['amount']) ?></td>
+                                        <td><?= htmlspecialchars($row['amount']) ?>dh</td>
                                         <td><?= htmlspecialchars($row['Date']) ?></td>
                                     </tr>
                                 <?php endwhile; ?>
+                                <tr>
+                                    <th colspan="3" class="bg-c-60 color-30">المجموع</th>
+                                    <td colspan="2"><?= htmlspecialchars($totalAmount)?>dh</td>
+                                </tr>
                             </tbody>
                         </table>
                     <?php else : ?>

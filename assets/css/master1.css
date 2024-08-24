@@ -77,7 +77,10 @@ section:not(:first-of-type)
 /* Start Header */
 .header {
     background-color: white;
-    position: relative;
+    position: fixed; /* Changed from relative to fixed */
+    top: 0; /* Added to fix the header at the top */
+    width: 100%; /* Ensure the header takes full width */
+    z-index: 1000; /* Ensure the header stays on top */
     -webkit-box-shadow: 0 0 10px #ddd;
     -moz-box-shadow: 0 0 10px #ddd;
     box-shadow: 0 0 10px #ddd;
@@ -187,6 +190,7 @@ section:not(:first-of-type)
 /* End Header */
 /* Start hero */
 #hero {
+    margin-top: 90px; /* Adjust to avoid content overlap with fixed header */
     position: relative;
     height: calc(100vh - 90px);
     color: #F1FAEE;

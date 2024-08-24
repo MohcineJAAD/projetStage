@@ -132,8 +132,8 @@ if ($result->num_rows > 0)
             <h2>تأكيد الحذف</h2>
             <p>هل أنت متأكد أنك تريد حذف هذه الخطة؟</p>
             <div class="action-buttons">
-                <button id="confirmDeleteButton" class="btn-shape color-fff bg-f00 p-10">حذف</button>
-                <button id="cancelDeleteButton" class="btn-shape color-fff bg-c-60 p-10">إلغاء</button>
+                <button id="confirmDeleteButton" class="btn-shape color-30 bg-f00 p-10">حذف</button>
+                <button id="cancelDeleteButton" class="btn-shape color-30 bg-c-60 p-10">إلغاء</button>
             </div>
         </div>
     </div>

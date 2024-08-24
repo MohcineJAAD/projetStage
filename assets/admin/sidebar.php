@@ -1,8 +1,17 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
+require "../php/db_connection.php";
+$sql = "SELECT logo, club_name from admin";
+$res = $conn->query($sql);
+$row = $res->fetch_assoc();
 ?>
 <div class="sidebar bg-fff p-20 p-relative">
-    <h3 class="p-relative txt-c mt-0">A.C.S.E</h3>
+    <div class="profile-header">
+        <img src="../images/<?php echo $row['logo'];?>" alt="Image de Profil" class="profile-image m-0 mr-10">
+        <div class="profile-info">
+            <h3 class="p-relative txt-c mt-0"><?php echo $row['club_name'];?></h3>
+        </div>
+    </div>
     <ul>
         <li>
             <a href="index.php" class="<?php echo $current_page == 'index.php' ? 'active' : ''; ?> d-flex align-c fs-14 color-000 rad-6 p-10">

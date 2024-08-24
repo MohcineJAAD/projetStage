@@ -129,7 +129,7 @@ session_start();
                                     echo "</td>";
 
                                     echo "<td><input type='hidden' name='identifier' value='" . htmlspecialchars($row1['identifier']) . "'>";
-                                    echo "<button type='submit' class='btn-shape bg-c-60 color-fff'>حفض</button></td>";
+                                    echo "<button type='submit' class='btn-shape bg-c-60 color-30'>حفض</button></td>";
                                     echo "</tr>";
                                     echo "</form>";
                                 }

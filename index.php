@@ -1,4 +1,7 @@
 <?php
+
+use PhpOffice\PhpSpreadsheet\Helper\Sample;
+
 session_start();
 
 $id = '';
@@ -63,7 +66,7 @@ if ($result->num_rows > 0) {
     <section id="about" dir="rtl">
         <div class="container">
             <h2>حول صالتنا الرياضية</h2>
-            <p>في A.C.S.E، نحن مقتنعون بأهمية تقديم برامج تدريبية عالية الجودة لمساعدة أعضائنا على تحقيق أهدافهم في اللياقة البدنية. بفضل مرافق حديثة وفريق من المدربين ذوي الخبرة، نقدم مجموعة واسعة من الدروس، بما في ذلك التايكواندو والفول كونتاكت والأيروبيك.</p>
+            <p>في النادي <?php echo $row['club_name']?>، نحن مقتنعون بأهمية تقديم برامج تدريبية عالية الجودة لمساعدة أعضائنا على تحقيق أهدافهم في اللياقة البدنية. بفضل مرافق حديثة وفريق من المدربين ذوي الخبرة، نقدم مجموعة واسعة من الدروس، بما في ذلك التايكواندو والفول كونتاكت والأيروبيك.</p>
         </div>
     </section>
     <section id="plans">
@@ -127,7 +130,7 @@ if ($result->num_rows > 0) {
             <div class="footer-sections">
                 <div class="footer-section">
                     <h3>حولنا</h3>
-                    <p>في A.C.S.E، نحن ملتزمون بتقديم برامج تدريب عالية الجودة لمساعدة أعضائنا على تحقيق أهدافهم في اللياقة البدنية.</p>
+                    <p>في نادي <?php echo $row['club_name']?> نحن ملتزمون بتقديم برامج تدريب عالية الجودة لمساعدة أعضائنا على تحقيق أهدافهم في اللياقة البدنية.</p>
                 </div>
                 <div class="footer-section">
                     <h3>روابط سريعة</h3>
@@ -142,23 +145,23 @@ if ($result->num_rows > 0) {
                 <div class="footer-section">
                     <h3>اتصل بنا</h3>
                     <ul>
-                        <li>البريد الإلكتروني: lorem@ipsum.com</li>
-                        <li>الهاتف: +212 123 456 789</li>
-                        <li>العنوان: 123 شارع حي الحسني، الداخلة، المغرب</li>
+                        <li>البريد الإلكتروني: <?php echo $row['email']?></li>
+                        <li>الهاتف: <?php echo $row['phone']?></li>
+                        <li>العنوان: <?php echo $row['address']?></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h3>تابعنا</h3>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="<?php echo $row['facebook']?>" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="<?php echo $row['twitter']?>" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="<?php echo $row['instagram']?>" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 A.C.S.E جميع الحقوق محفوظة.</p>
+        <p>&copy; 2024  جميع الحقوق محفوظة النادي <?php echo $row['club_name']?> .</p>
         </div>
     </footer>
 
@@ -189,8 +192,8 @@ if ($result->num_rows > 0) {
 
         const userData = {
             identifier: "<?php echo $id; ?>",
-            clubAddress: "123 Sports Club St, Cityville, State 12345",
-            adminPhone: "+1 (234) 567-8900"
+            clubAddress: "<?php echo $row['address']; ?>",
+            adminPhone: "<?php echo $row['phone']; ?>"
         };
         window.onload = function() {
             if (userData.identifier) {

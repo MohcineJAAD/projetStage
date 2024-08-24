@@ -2,8 +2,7 @@
 require "db_connection.php";
 session_start();
 
-function generateUniqueIdentifier($conn)
-{
+function generateUniqueIdentifier($conn) {
     $query = "SELECT identifier FROM adherents ORDER BY identifier DESC LIMIT 1";
     $result = $conn->query($query);
     $lastIdentifier = $result->fetch_assoc()['identifier'] ?? null;
@@ -11,8 +10,7 @@ function generateUniqueIdentifier($conn)
     return $lastIdentifier ? incrementIdentifier($lastIdentifier) : 'A000000001';
 }
 
-function incrementIdentifier($identifier)
-{
+function incrementIdentifier($identifier) {
     $alphaPart = substr($identifier, 0, 1);
     $numPart = substr($identifier, 1);
     $incrementedNumPart = str_pad((int)$numPart + 1, 9, '0', STR_PAD_LEFT);
@@ -25,8 +23,7 @@ function incrementIdentifier($identifier)
     return $alphaPart . $incrementedNumPart;
 }
 
-function handleFileUpload($file, &$fileName)
-{
+function handleFileUpload($file, &$fileName) {
     $allowedTypes = ['image/jpeg', 'image/png'];
     $uploadDir = '../uploads/';
 
@@ -65,6 +62,9 @@ function handleFileUpload($file, &$fileName)
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
+    // Store all posted data in session in case of an error
+    $_SESSION['formData'] = $_POST;
+
     $birthDate = trim($_POST['birthDate']);
     $currentDate = date('Y-m-d');
 
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
     $membershipDate = date('Y-m-d');
 
     if (empty($prenom) || empty($nom) || empty($birthDate) || empty($address) || empty($sport) || empty($weight) || empty($healthStatus)) {
-        $_SESSION['message'] = "الرجاء ملء جميع الحقول الإلزامية (*)";
+        $_SESSION['message'] = " *الرجاء ملء جميع الحقول الإلزامية";
         $_SESSION['status'] = "error";
         header("Location: ../../sign_up.php");
         exit();
@@ -106,10 +106,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssssssssssss", $identifier, $nom, $prenom, $birthDate, $weight, $sport, $membershipDate, $fileName, $guardianName, $guardianPhone, $address, $bloodType, $healthStatus);
 
-
     if ($stmt->execute()) {
         $_SESSION['message'] = $identifier;
         $_SESSION['status'] = "success";
+        // Clear form data from session after successful submission
+        unset($_SESSION['formData']);
     } else {
         $_SESSION['message'] = "Erreur lors de l'inscription: " . $stmt->error;
         $_SESSION['status'] = "error";
@@ -122,3 +123,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['birthDate'])) {
 }
 
 $conn->close();
+?>

@@ -1,5 +1,15 @@
 <?php
 session_start();
+$formData = $_SESSION['formData'] ?? [];
+require "assets/php/db_connection.php";
+$sports = [];
+$sql = "SELECT id, name FROM plans";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0)
+    while ($row = $result->fetch_assoc())
+        $sports[] = $row;
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -35,85 +45,86 @@ session_start();
                         </div>
                         <div class="row">
                             <div class="input-field">
-                                <label for="prenom">الاسم الأول<span style="color: #f00;">(*)</span></label>
-                                <input type="text" id="prenom" name="prenom" placeholder="أدخل اسمك الأول">
+                                <label for="prenom">الاسم الأول<span style="color: #f00;"> *</span></label>
+                                <input type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($formData['prenom'] ?? ''); ?>" placeholder="أدخل اسمك الأول">
                             </div>
                             <div class="input-field">
-                                <label for="nom">اسم العائلة<span style="color: #f00;">(*)</span></label>
-                                <input type="text" id="nom" name="nom" placeholder="أدخل اسمك الأخير">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field">
-                                <label for="birthDate">تاريخ الازدياد<span style="color: #f00;">(*)</span></label>
-                                <input type="date" id="birthDate" name="birthDate">
-                            </div>
-                            <div class="input-field">
-                                <label for="address">العنوان<span style="color: #f00;">(*)</span></label>
-                                <input type="text" id="address" name="address" placeholder="أدخل عنوانك">
+                                <label for="nom">اسم العائلة<span style="color: #f00;"> *</span></label>
+                                <input type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($formData['nom'] ?? ''); ?>" placeholder="أدخل اسمك الأخير">
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field">
-                                <label for="healthStatus">الحالة الصحية<span style="color: #f00;">(*)</span></label>
+                                <label for="birthDate">تاريخ الميلاد<span style="color: #f00;"> *</span></label>
+                                <input type="date" id="birthDate" name="birthDate" value="<?php echo htmlspecialchars($formData['birthDate'] ?? ''); ?>">
+                            </div>
+                            <div class="input-field">
+                                <label for="address">العنوان<span style="color: #f00;"> *</span></label>
+                                <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($formData['address'] ?? ''); ?>" placeholder="أدخل العنوان">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field">
+                                <label for="healthStatus">الحالة الصحية<span style="color: #f00;"> *</span></label>
                                 <select id="healthStatus" name="healthStatus">
                                     <option value="" disabled selected>اختر الحالة الصحية</option>
-                                    <option value="سليم">سليم</option>
-                                    <option value="فرط في الحركة">فرط في الحركة</option>
-                                    <option value="يتناول دواء">يتناول دواء</option>
-                                    <option value="ضيق التنفس">ضيق التنفس</option>
-                                    <option value="السكري">السكري</option>
-                                    <option value="التوثر">التوثر</option>
-                                    <option value="الاعصاب">الاعصاب</option>
-                                    <option value="التوحد">التوحد</option>
-                                    <option value="إعاقة حركية">إعاقة حركية</option>
+                                    <option value="سليم" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'سليم') ? 'selected' : ''; ?>>سليم</option>
+                                    <option value="فرط في الحركة" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'فرط في الحركة') ? 'selected' : ''; ?>>فرط في الحركة</option>
+                                    <option value="يتناول دواء" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'يتناول دواء') ? 'selected' : ''; ?>>يتناول دواء</option>
+                                    <option value="ضيق التنفس" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'ضيق التنفس') ? 'selected' : ''; ?>>ضيق التنفس</option>
+                                    <option value="السكري" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'السكري') ? 'selected' : ''; ?>>السكري</option>
+                                    <option value="التوثر" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'التوثر') ? 'selected' : ''; ?>>التوثر</option>
+                                    <option value="الاعصاب" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'الاعصاب') ? 'selected' : ''; ?>>الاعصاب</option>
+                                    <option value="التوحد" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'التوحد') ? 'selected' : ''; ?>>التوحد</option>
+                                    <option value="إعاقة حركية" <?php echo (isset($formData['healthStatus']) && $formData['healthStatus'] == 'إعاقة حركية') ? 'selected' : ''; ?>>إعاقة حركية</option>
                                 </select>
                             </div>
                             <div class="input-field">
                                 <label for="bloodType">فصيلة الدم</label>
                                 <select id="bloodType" name="bloodType">
                                     <option value="" disabled selected>اختر فصيلة الدم</option>
-                                    <option value="A+">A+</option>
-                                    <option value="A-">A-</option>
-                                    <option value="B+">B+</option>
-                                    <option value="B-">B-</option>
-                                    <option value="AB+">AB+</option>
-                                    <option value="AB-">AB-</option>
-                                    <option value="O+">O+</option>
-                                    <option value="O-">O-</option>
+                                    <option value="A+" <?php echo (isset($formData['bloodType']) && $formData['bloodType'] == 'A+') ? 'selected' : ''; ?>>A+</option>
+                                    <option value="A-" <?php echo (isset($formData['bloodType']) && $formData['bloodType'] == 'A-') ? 'selected' : ''; ?>>A-</option>
+                                    <option value="B+" <?php echo (isset($formData['bloodType']) && $formData['bloodType'] == 'B+') ? 'selected' : ''; ?>>B+</option>
+                                    <option value="B-" <?php echo (isset($formData['bloodType']) && $formData['bloodType'] == 'B-') ? 'selected' : ''; ?>>B-</option>
+                                    <option value="AB+" <?php echo (isset($formData['bloodType']) && $formData['bloodType'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
+                                    <option value="AB-" <?php echo (isset($formData['bloodType']) && $formData['bloodType'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
+                                    <option value="O+" <?php echo (isset($formData['bloodType']) && $formData['bloodType'] == 'O+') ? 'selected' : ''; ?>>O+</option>
+                                    <option value="O-" <?php echo (isset($formData['bloodType']) && $formData['bloodType'] == 'O-') ? 'selected' : ''; ?>>O-</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field">
-                                <label for="weight">الوزن<span style="color: #f00;">(*)</span></label>
-                                <input type="number" id="weight" name="weight" placeholder="أدخل الوزن" step="1" min="0" pattern="^\d*(\.\d{0,2})?$">
+                                <label for="weight">الوزن<span style="color: #f00;"> *</span></label>
+                                <input type="number" id="weight" name="weight" value="<?php echo htmlspecialchars($formData['weight'] ?? ''); ?>" placeholder="أدخل الوزن" step="1" min="0" pattern="^\d*(\.\d{0,2})?$">
                             </div>
                             <div class="input-field">
-                                <label for="sport">الرياضة<span style="color: #f00;">(*)</span></label>
+                                <label for="sport">الرياضة<span style="color: #f00;"> *</span></label>
                                 <select id="sport" name="sport">
                                     <option value="" disabled selected>اختر الرياضة</option>
-                                    <option value="تايكواندو">تايكواندو</option>
-                                    <option value="فول كونتاكت">فول كونتاكت</option>
-                                    <option value="إيروبيك / رجال">إيروبيك / رجال</option>
-                                    <option value="إيروبيك / سيدات">إيروبيك / سيدات</option>
+                                    <?php foreach ($sports as $sport): ?>
+                                        <option value="<?php echo htmlspecialchars($sport['name']); ?>" <?php echo (isset($formData['sport']) && $formData['sport'] == $sport['name']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($sport['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field">
                                 <label for="guardianName">اسم الوصي</label>
-                                <input type="text" id="guardianName" name="guardianName" placeholder="أدخل اسم الوصي">
+                                <input type="text" id="guardianName" name="guardianName" value="<?php echo htmlspecialchars($formData['guardianName'] ?? ''); ?>" placeholder="أدخل اسم الوصي">
                             </div>
                             <div class="input-field">
                                 <label for="guardianPhone">هاتف الوصي</label>
-                                <input type="tel" id="guardianPhone" name="guardianPhone" placeholder="أدخل هاتف الوصي" dir="rtl">
+                                <input type="tel" id="guardianPhone" name="guardianPhone" value="<?php echo htmlspecialchars($formData['guardianPhone'] ?? ''); ?>" placeholder="أدخل هاتف الوصي" dir="rtl">
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field">
                                 <label for="secondGuardianPhone">الهاتف الثاني للوصي</label>
-                                <input type="tel" id="secondGuardianPhone" name="secondGuardianPhone" placeholder="أدخل الهاتف الثاني للوصي" dir="rtl">
+                                <input type="tel" id="secondGuardianPhone" name="secondGuardianPhone" value="<?php echo htmlspecialchars($formData['secondGuardianPhone'] ?? ''); ?>" placeholder="أدخل الهاتف الثاني للوصي" dir="rtl">
                             </div>
                             <div class="input-field">
                                 <label for="beltLevel">مستوى الحزام</label>
@@ -123,7 +134,7 @@ session_start();
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn" name="send" value="send">Suivant</button>
+                    <button type="submit" class="btn" name="send" value="send">تسجيل</button>
                 </form>
             </div>
         </div>

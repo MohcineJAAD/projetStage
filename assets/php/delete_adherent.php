@@ -26,10 +26,10 @@ if (isset($_GET['id'])) {
     // Commit transaction
     $conn->commit();
     
-    $_SESSION['message'] = 'Adhérent supprimé avec succès';
+    $_SESSION['message'] = 'تم حذف';
     $_SESSION['status'] = 'success';
 } else {
-    $_SESSION['message'] = "Erreur lors de la suppression d'adhérent: ID non spécifié";
+    $_SESSION['message'] = "حدث خطأ أثناء حذف";
     $_SESSION['status'] = 'error';
 }
 
