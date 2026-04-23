@@ -47,18 +47,47 @@ function getPlans($conn)
     return $plans;
 }
 
+function getMonthlyStats($conn)
+{
+    $stmt = $conn->prepare("
+        SELECT
+            a.identifier,
+            a.nom,
+            a.prenom,
+            a.type,
+            (SELECT COUNT(*) FROM payments p
+             WHERE p.identifier = a.identifier
+             AND MONTH(p.Date) = MONTH(CURDATE())
+             AND YEAR(p.Date) = YEAR(CURDATE())
+             AND p.type = 'mois') AS paid,
+            (SELECT COUNT(*) FROM attendance att
+             WHERE att.identifier = a.identifier
+             AND MONTH(att.date) = MONTH(CURDATE())
+             AND YEAR(att.date) = YEAR(CURDATE())) AS sessions
+        FROM adherents a
+        WHERE a.status = 'active'
+        ORDER BY paid ASC, sessions ASC
+    ");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stats = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    return $stats;
+}
+ 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $identifier = trim($_POST['identifier']);
     $_SESSION['search_results'] = searchAttendance($conn, $identifier);
     header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
+    exit();
 }
-
 $searchResults = isset($_SESSION['search_results']) ? $_SESSION['search_results'] : null;
 unset($_SESSION['search_results']);
 
 $activeAdherents = getActiveAdherents($conn);
 $plans = getPlans($conn);
+$monthlyStats = getMonthlyStats($conn);
+$currentDay = (int)date('j');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,6 +113,63 @@ $plans = getPlans($conn);
         <div class="content w-full">
             <?php require 'header.php'; ?>
             <h1 class="p-relative">إدارة الحضور</h1>
+             
+            <!-- Monthly Summary -->
+            <div class="absences p-20 bg-fff rad-10 m-20">
+                <h2 class="mt-0 mb-20">ملخص الشهر الحالي</h2>
+                <?php if ($currentDay < 10): ?>
+                    <p style="text-align:center;color:#888;">سيظهر الملخص بعد اليوم العاشر من الشهر (اليوم الحالي: <?php echo $currentDay; ?>)</p>
+                <?php else: ?>
+                    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+                        <span style="background:#ffecec;color:#c00;padding:6px 14px;border-radius:20px;font-size:13px;">&#9899; لم يدفع</span>
+                        <span style="background:#fff7e6;color:#b36b00;padding:6px 14px;border-radius:20px;font-size:13px;">&#9899; دفع لكن أقل من 5 حصص</span>
+                        <span style="background:#eafaf1;color:#1a7a3a;padding:6px 14px;border-radius:20px;font-size:13px;">&#9899; دفع وحضر بانتظام</span>
+                    </div>
+                    <div class="responsive-table">
+                        <table class="fs-15 w-full">
+                            <thead>
+                                <tr>
+                                    <th>الاسم الكامل</th>
+                                    <th>المعرف</th>
+                                    <th>الرياضة</th>
+                                    <th>الدفع</th>
+                                    <th>عدد الحصص</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($monthlyStats as $row):
+                                    $paid = (int)$row['paid'];
+                                    $sessions = (int)$row['sessions'];
+                                    if ($paid === 0) {
+                                        $statusColor = '#ffecec';
+                                        $statusText = 'لم يدفع';
+                                        $dotColor = '#c00';
+                                    } elseif ($sessions < 5) {
+                                        $statusColor = '#fff7e6';
+                                        $statusText = 'دفع / حضور ضعيف';
+                                        $dotColor = '#b36b00';
+                                    } else {
+                                        $statusColor = '#eafaf1';
+                                        $statusText = 'منتظم';
+                                        $dotColor = '#1a7a3a';
+                                    }
+                                ?>
+                                    <tr style="background:<?php echo $statusColor; ?>">
+                                        <td><?php echo htmlspecialchars($row['prenom'] . ' ' . $row['nom']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['identifier']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['type']); ?></td>
+                                        <td><?php echo $paid > 0 ? '✅ دفع' : '❌ لم يدفع'; ?></td>
+                                        <td><?php echo $sessions; ?></td>
+                                        <td style="color:<?php echo $dotColor; ?>;font-weight:600;"><?php echo $statusText; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+
             <div class="absences p-20 bg-fff rad-10 m-20">
                 <h2 class="mt-0 mb-20 mt-20">بحث متقدم</h2>
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">

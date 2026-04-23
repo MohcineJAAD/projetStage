@@ -94,6 +94,7 @@ $plans = getPlans($conn);
                         }
                         ?>
                     </div>
+                    <input type="text" id="adherent-search" placeholder="بحث بالاسم أو المعرف..." style="padding:8px 14px;border:1px solid #ccc;border-radius:8px;font-size:15px;width:280px;margin-bottom:10px;">
                 </div>
                 <div class="responsive-table special">
                     <?php
@@ -157,14 +158,24 @@ $plans = getPlans($conn);
 </body>
 
 <script>
-    // Variables to store elements and selected adherent ID
+    const searchInput = document.getElementById('adherent-search');
+    searchInput.addEventListener('input', function () {
+        const query = this.value.trim().toLowerCase();
+        const rows = document.querySelectorAll('#adherent-list tbody tr');
+        rows.forEach(row => {
+            const name = row.cells[0].textContent.toLowerCase();
+            const id = row.cells[1].textContent.toLowerCase();
+            row.style.display = (name.includes(query) || id.includes(query)) ? '' : 'none';
+        });
+    });
+</script>
+<script>
     const deleteModal = document.getElementById('deleteConfirmationModal');
     const deleteCloseButton = document.querySelector('.close');
     const confirmDeleteButton = document.getElementById('confirmDeleteButton');
     const cancelDeleteButton = document.getElementById('cancelDeleteButton');
     let deleteAdherentID = null;
 
-    // Show the delete confirmation modal
     window.confirmDelete = (adherentID) => {
         deleteAdherentID = adherentID;
         deleteModal.style.display = 'flex';

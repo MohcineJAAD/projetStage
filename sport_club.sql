@@ -34,7 +34,7 @@ CREATE TABLE `adherents` (
   `date_naissance` date NOT NULL,
   `poids` decimal(5,2) NOT NULL,
   `type` varchar(50) NOT NULL,
-  `date_adhesion` date NOT NULL DEFAULT curdate(),
+  `date_adhesion` date NOT NULL DEFAULT (curdate()),
   `image_path` varchar(255) DEFAULT NULL,
   `BC_path` varchar(255) DEFAULT NULL,
   `guardian_name` varchar(50) DEFAULT NULL,
@@ -166,7 +166,7 @@ CREATE TABLE `payments` (
   `payment_date` date NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `type` varchar(50) NOT NULL,
-  `Date` date DEFAULT curdate()
+  `Date` date DEFAULT (curdate())
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -194,7 +194,7 @@ CREATE TABLE `plans` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `created_at` date NOT NULL DEFAULT current_timestamp(),
+  `created_at` date NOT NULL DEFAULT (curdate()),
   `description` varchar(500) DEFAULT NULL,
   `assurance` decimal(10,2) DEFAULT NULL,
   `adherence` decimal(10,2) DEFAULT NULL
@@ -244,7 +244,7 @@ CREATE TABLE `trophies` (
   `id` int(11) NOT NULL,
   `adherent_id` varchar(20) NOT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` date NOT NULL DEFAULT current_timestamp()
+  `created_at` date NOT NULL DEFAULT (curdate())
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
